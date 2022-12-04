@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var jwt = require('express-jwt');
+var { expressjwt: jwt } = require('express-jwt');
 var auth = jwt({
   secret: 'MY_SECRET',
-  userProperty: 'payload'
+  userProperty: 'payload',
+  algorithms: ['HS256']
 });
 
 var ctrlProfile = require('../controllers/profile');
@@ -20,15 +21,15 @@ router.post('/register', ctrlAuth.register);
 router.post('/login', ctrlAuth.login);
 
 //edit profile
-router.post('/editProfile',ctrlProfile.editProfile);
+router.post('/editProfile', ctrlProfile.editProfile);
 
 //new course
-router.post('/newCourse',ctrlCourse.newCourse);
+router.post('/newCourse', ctrlCourse.newCourse);
 
 //retrieve user's courses
-router.get('/courseDetails/:course',ctrlCourse.courseDetails)
-router.get('/allCourses',ctrlCourse.allCourses)
-router.post('/addSyllabus',ctrlCourse.addSyllabus)
+router.get('/courseDetails/:course', ctrlCourse.courseDetails)
+router.get('/allCourses', ctrlCourse.allCourses)
+router.post('/addSyllabus', ctrlCourse.addSyllabus)
 
 //Forgot Password
 router.post('/forgotPassword', ctrlAuth.forgotPassword);

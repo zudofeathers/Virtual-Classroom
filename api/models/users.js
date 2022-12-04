@@ -1,4 +1,4 @@
-var mongoose = require( 'mongoose' );
+var mongoose = require('mongoose');
 var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 
@@ -14,7 +14,7 @@ var userSchema = new mongoose.Schema({
   },
   hash: String,
   salt: String,
-  faculty:{
+  faculty: {
     type: Boolean,
     default: false
   },
@@ -26,23 +26,23 @@ var userSchema = new mongoose.Schema({
     enum: ["male", "female"],
     default: "male"
   },
-  courses:{
+  courses: {
     type: [String],
     default: []
   }
 });
 
-userSchema.methods.setPassword = function(password){
+userSchema.methods.setPassword = function (password) {
   this.salt = crypto.randomBytes(16).toString('hex');
   this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
 };
 
-userSchema.methods.validPassword = function(password) {
+userSchema.methods.validPassword = function (password) {
   var hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
   return this.hash === hash;
 };
 
-userSchema.methods.generateJwt = function() {
+userSchema.methods.generateJwt = function () {
   var expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);
 

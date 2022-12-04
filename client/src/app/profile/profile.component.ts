@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthenticationService, UserDetails } from '../authentication.service';
 import { Router } from '@angular/router';
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   templateUrl: './profile.component.html'
@@ -17,17 +17,17 @@ export class ProfileComponent {
   //   email:""
   // }
 
-  constructor(private auth: AuthenticationService, private router: Router, private http: HttpClient) {}
+  constructor(private auth: AuthenticationService, private router: Router, private http: HttpClient) { }
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
-  ngOnInit() {    
+  ngOnInit() {
     this.auth.profile().subscribe(user => {
-      this.details = user;
       //Log the user details
       console.log(user);
+      this.details = user;
     }, (err) => {
-      console.error(err);
+      console.error("dingessss", err);
     });
   }
   // fields = [];
@@ -35,13 +35,14 @@ export class ProfileComponent {
 
   editProfile() {
     console.log("Profile is being edited");
+    console.log(this.details)
     console.log(this.details.dob);
     console.log(this.details.gender);
     console.log(this.details.education);
     console.log(this.details.phone);
     console.log(this.details.email);
-    this.http.post('/api/editProfile',JSON.stringify(this.details), this.httpOptions)
-    .subscribe(res => console.log(res));
+    this.http.post('/api/editProfile', JSON.stringify(this.details), this.httpOptions)
+      .subscribe(res => console.log(res));
     // this.router.navigateByUrl('/newCourse');
   }
 }

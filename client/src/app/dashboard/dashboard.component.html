@@ -1,5 +1,6 @@
 <!-- Full Page Intro -->
-<div class="view full-page-intro" style="background-image: url('https://images.pexels.com/photos/745365/pexels-photo-745365.jpeg?w=1260&h=750&dpr=2&auto=compress&cs=tinysrgb'); background-repeat: no-repeat; background-size: cover;">
+<div class="view full-page-intro"
+  style="background-image: url('https://images.pexels.com/photos/745365/pexels-photo-745365.jpeg?w=1260&h=750&dpr=2&auto=compress&cs=tinysrgb'); background-repeat: no-repeat; background-size: cover;">
 
   <div class="my-view container">
     <!--Main Navigation-->
@@ -19,15 +20,18 @@
           </a>
           <a (click)="find = false" class="list-group-item waves-effect active">
             <i class="fa fa-pie-chart mr-3"></i>Dashboard</a>
-          <a *ngIf="user?.faculty==false" (click)="allCourses()" class="list-group-item list-group-item-action waves-effect">
+          <a *ngIf="user?.faculty==false" (click)="allCourses()"
+            class="list-group-item list-group-item-action waves-effect">
             <i class="fa fa-table mr-3"></i>Find new courses</a>
           <a routerLink="/profile" href="#" class="list-group-item list-group-item-action waves-effect">
             <i class="fa fa-user mr-3"></i>Profile</a>
-          <a *ngIf="user?.faculty" data-toggle="modal" data-target="#exampleModal" class="list-group-item list-group-item-action waves-effect">
+          <a *ngIf="user?.faculty" data-toggle="modal" data-target="#exampleModal"
+            class="list-group-item list-group-item-action waves-effect">
             <i class="fa fa-plus mr-3"></i>New Course </a>
 
           <!-- Modal -->
-          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
