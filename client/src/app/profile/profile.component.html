@@ -18,7 +18,7 @@
         </a>
         <a routerLink="/dashboard" class="list-group-item waves-effect ">
           <i class="fa fa-pie-chart mr-3"></i>Dashboard</a>
-        <a *ngIf="user?.faculty==false" class="list-group-item  list-group-item-action waves-effect">
+        <a *ngIf="details?.faculty==false" class="list-group-item  list-group-item-action waves-effect">
           <i class="fa fa-table mr-3"></i>Find new courses</a>
         <a routerLink="/profile" href="#" class="list-group-item active list-group-item-action waves-effect">
           <i class="fa fa-user mr-3"></i>Profile</a>
@@ -61,8 +61,10 @@
                   </div>
                   <div class="panel-body">
                     <div class="row">
-                      <div class="text-center col-md-5 col-lg-5 w-25 ml-5 h-25" >
-                        <img alt="User Pic" src="../../assets/images/default_profile.png" class="img-circle img-responsive"> </div>
+                      <div class="text-center col-md-5 col-lg-5 w-25 ml-5 h-25">
+                        <img alt="User Pic" src="../../assets/images/default_profile.png"
+                          class="img-circle img-responsive">
+                      </div>
 
                       <div *ngIf="!editNow" class=" col-md-9 col-lg-9 ml-5 mt-5">
                         <table class="table table-user-information">
@@ -100,32 +102,37 @@
                             <tr>
                               <td>Date of Birth: </td>
                               <td>
-                                <input class="form-control" type="text" placeholder="Date of Birth" [(ngModel)]="details.dob">
+                                <input class="form-control" type="text" placeholder="Date of Birth"
+                                  [(ngModel)]="details.dob">
                               </td>
                             </tr>
                             <tr>
                               <td>Gender: </td>
                               <td>
-                                <input class="form-control" type="text" placeholder="Gender" [(ngModel)]="details.gender">
+                                <input class="form-control" type="text" placeholder="Gender"
+                                  [(ngModel)]="details.gender">
                               </td>
                             </tr>
                             <tr>
                               <td>Education: </td>
                               <td>
-                                <input class="form-control" type="text" placeholder="Education" [(ngModel)]="details.education">
+                                <input class="form-control" type="text" placeholder="Education"
+                                  [(ngModel)]="details.education">
                               </td>
                             </tr>
 
                             <tr>
                               <td>Phone number:</td>
                               <td>
-                                <input class="form-control" type="text" placeholder="Phone number" [(ngModel)]="details.phone">
+                                <input class="form-control" type="text" placeholder="Phone number"
+                                  [(ngModel)]="details.phone">
                               </td>
                             </tr>
                             <tr>
                               <td>Email: </td>
                               <td>
-                                <input class="form-control" type="text" placeholder="E-mail address" [(ngModel)]="details.email">
+                                <input class="form-control" type="text" placeholder="E-mail address"
+                                  [(ngModel)]="details.email">
                               </td>
                             </tr>
 
@@ -136,8 +143,10 @@
 
                     </div>
                     <div class="m-4">
-                      <button type="button" class="btn btn-primary" (click)="editNow=!editNow"> {{editNow?'Back':'Edit'}}</button>
-                      <button type="button" *ngIf="editNow" class="btn btn-primary" (click)="editProfile()"> Update</button>
+                      <button type="button" class="btn btn-primary" (click)="editNow=!editNow">
+                        {{editNow?'Back':'Edit'}}</button>
+                      <button type="button" *ngIf="editNow" class="btn btn-primary" (click)="editProfile()">
+                        Update</button>
                     </div>
                   </div>
                 </div>
