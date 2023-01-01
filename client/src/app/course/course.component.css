@@ -1,23 +1,23 @@
-.my-main{
+.my-main {
    padding-left: 0%;
 }
 
 ::-webkit-input-placeholder {
-    text-align: center;
- }
- 
- :-moz-placeholder { /* Firefox 18- */
-    text-align: center;  
- }
- 
- ::-moz-placeholder {  /* Firefox 19+ */
-    text-align: center;  
- }
- 
- :-ms-input-placeholder {  
-    text-align: center; 
- }
+   text-align: center;
+}
 
- .syllabus{
-    padding-left: 25%
- }
+:-moz-placeholder {
+   /* Firefox 18- */
+   text-align: center;
+}
+
+::-moz-placeholder {
+   /* Firefox 19+ */
+   text-align: center;
+}
+
+:-ms-input-placeholder {
+   text-align: center;
+}
+
+.syllabus {}
