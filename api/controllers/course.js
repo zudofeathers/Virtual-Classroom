@@ -55,6 +55,23 @@ module.exports.newCourse = function (req, res) {
   }
 };
 
+module.exports.addAssignment = function (req, res) {
+  console.log("Searching and adding assignment " + req.params.course);
+  var code = (req.params.course);
+  console.log("req.bodyreq.body", req);
+
+  Course.findOneAndUpdate({
+    code: code
+  }, function (err, course) {
+    if (err) {
+      console.log(err)
+      res.status(404).json(err);
+    }
+    console.log("Sending course " + course);
+    res.status(200).json(course);
+  });
+}
+
 module.exports.courseDetails = function (req, res) {
   console.log("Searching and sending " + req.params.course);
   var code = (req.params.course);
