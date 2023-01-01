@@ -39,28 +39,43 @@
 					<div class="card-body d-sm-flex justify-content-between">
 						<h4 class="mb-2 mb-sm-0 pt-1"> Course Materials</h4>
 					</div>
-
 				</div>
 
-				<div class="col-md-10 mb-4 syllabus">
+				<div class="container row">
+					<div class="col-md-6 mb-4">
+						<div class="card">
+							<div>
+								<h4 class="mb-3 mb-sm-2 pt-1"> Syllabus</h4>
+								<div class="p-2">
+									<ul class="list-group">
+										<li class="list-group-item" *ngFor="let item of course.syllabus">{{item}}</li>
+									</ul>
+									<input (keydown)="addNew($event)" placeholder="Add new" class="form-control"
+										[ngModelOptions]="{standalone: true}" [(ngModel)]="newSyllabus">
+								</div>
+							</div>
+						</div>
+					</div>
 
-					<div class="card">
+					<div class="col-md-6 mb-4">
 
-						<div>
-							<h4 class="mb-3 mb-sm-2 pt-1"> Syllabus</h4>
-							<div class="p-2">
-								<ul class="list-group">
-									<li class="list-group-item" *ngFor="let item of course.syllabus">{{item}}</li>
-								</ul>
-								<input (keydown)="addNew($event)" placeholder="Add new" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="newSyllabus">
+						<div class="card mb-4">
+							<form method="get" action="file.doc">
+								<button class="btn btn-primary m-2" type="submit"><i
+										class="fa fa-download mr-3"></i>Download assignment!</button>
+							</form>
+						</div>
+
+						<div class="card p-2">
+							<div>
+								<label for="profile_pic"><b>Upload your assignment here</b></label><input type="file"
+									id="assignment" name="assignment" accept=".txt">
 							</div>
 						</div>
 
 					</div>
 				</div>
-
 			</div>
-
 		</main>
 	</div>
 </div>
