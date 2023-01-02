@@ -29,6 +29,7 @@ router.post('/addAssignment/:course', ctrlCourse.addAssignment);
 
 //retrieve user's courses
 router.get('/courseDetails/:course', ctrlCourse.courseDetails)
+router.get('/courseAssignment/:course', ctrlCourse.courseAssignment)
 router.get('/allCourses', ctrlCourse.allCourses)
 router.post('/addSyllabus', ctrlCourse.addSyllabus)
 

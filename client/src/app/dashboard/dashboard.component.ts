@@ -59,19 +59,13 @@ export class DashboardComponent {
 
     const formData = new FormData();
     formData.append("assignment", this.newcourse.assignment, this.newcourse.assignment.name);
+    formData.append("name", this.newcourse.name);
+    formData.append("code", this.newcourse.code);
+    formData.append("owner", this.newcourse.owner);
 
-    console.log("formDataformDataformDataformData", formData)
-    this.http.post('/api/newCourse',
-      JSON.stringify({
-        "name": this.newcourse.name,
-        "code": this.newcourse.code,
-        "owner": this.newcourse.owner
-      }), this.httpOptions)
+    this.http.post('/api/newCourse', formData)
       .subscribe((res: { code: string }) => {
         console.log(res)
-        this.http.post(`/api/addAssignment/${res.code}`, formData, {
-          headers: new HttpHeaders({ 'Content-Type': 'application/pdf' })
-        }).subscribe(res2 => console.log(res2))
       });
     // this.router.navigateByUrl('/newCourse');
   }

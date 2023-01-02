@@ -3,16 +3,12 @@ var Course = mongoose.model('Course');
 var User = mongoose.model('User');
 
 module.exports.newCourse = function (req, res) {
-  console.log("Reached course.js");
   var course = new Course();
   course.name = req.body.name;
-  console.log("Name added");
   course.code = req.body.code;
-  console.log("Code added");
   course.owner = req.body.owner;
-  console.log("Owner added");
   course.users = [req.body.owner]; //owner also a user, add to user table also ...
-  console.log("Owner pushed");
+  course.assignment = req['files'].assignment
 
   course.save(function (err) {
     if (err) {
@@ -58,7 +54,7 @@ module.exports.newCourse = function (req, res) {
 module.exports.addAssignment = function (req, res) {
   console.log("Searching and adding assignment " + req.params.course);
   var code = (req.params.course);
-  console.log("req.bodyreq.body", req);
+  console.log("req.bodyreq.body", req['files']);
 
   Course.findOneAndUpdate({
     code: code
@@ -88,6 +84,23 @@ module.exports.courseDetails = function (req, res) {
   });
 }
 
+module.exports.courseAssignment = function (req, res) {
+  console.log("Searching and sending " + req.params.course);
+  var code = (req.params.course);
+
+  Course.findOne({
+    code: code
+  }, function (err, course) {
+    if (err) {
+      console.log(err)
+      res.status(404).json(err);
+    }
+    console.log("Sending course " + course);
+
+
+    res.status(200).json(course.assignment);
+  });
+}
 
 module.exports.addSyllabus = function (req, res) {
   console.log("Adding to " + req.body.course);

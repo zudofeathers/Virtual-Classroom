@@ -27,14 +27,22 @@ export class CourseComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.courseCode = params.courseCode;
       this.course.code = params.courseCode;
-      console.log("Requesting " + this.courseCode);
       this.http.get('/api/courseDetails/' + this.courseCode, this.httpOptions)
-        .subscribe(res => {
-          console.log(res);
+        .subscribe((res: any) => {
+          let byteChars = atob(res.assignment.data); //To decrypt data
+          let dataArray = new Array(byteChars.length);
+          for (let i = 0; i < byteChars.length; i++) {
+            dataArray[i] = byteChars.charCodeAt(i);
+          }
+          let byteArray = new Uint8Array(dataArray)
+          let pdf = new Blob(
+            [byteArray],
+            { type: 'application/pdf' }
+          )
           this.course = res;
+          this.course.assignment = pdf
         });
     });
-    console.log("Course is " + this.courseCode);
   }
   ngOnInit() {
     this.auth.profile().subscribe(user => {
@@ -43,6 +51,10 @@ export class CourseComponent implements OnInit {
       console.error(err);
     });
 
+  }
+  downloadAssignment() {
+    var downloadURL = URL.createObjectURL(this.course.assignment);
+    window.open(downloadURL)
   }
   startSession() {
     console.log("Connecting to live class ");
