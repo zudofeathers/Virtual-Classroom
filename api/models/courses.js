@@ -31,6 +31,16 @@ var courseSchema = new mongoose.Schema({
     assignment: {
         type: mongoose.Schema.Types.Mixed,
     },
+    assigmentAnswers: [{
+        user: {
+            type: String,
+            required: true
+        },
+        assignment: {
+            type: mongoose.Schema.Types.Mixed,
+            required: true
+        }
+    }],
 });
 
 mongoose.model('Course', courseSchema, 'courses');

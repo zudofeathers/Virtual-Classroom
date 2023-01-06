@@ -54,7 +54,6 @@ module.exports.newCourse = function (req, res) {
 module.exports.addAssignment = function (req, res) {
   console.log("Searching and adding assignment " + req.params.course);
   var code = (req.params.course);
-  console.log("req.bodyreq.body", req['files']);
 
   Course.findOneAndUpdate({
     code: code
@@ -69,7 +68,6 @@ module.exports.addAssignment = function (req, res) {
 }
 
 module.exports.courseDetails = function (req, res) {
-  console.log("Searching and sending " + req.params.course);
   var code = (req.params.course);
 
   Course.findOne({
@@ -79,7 +77,6 @@ module.exports.courseDetails = function (req, res) {
       console.log(err)
       res.status(404).json(err);
     }
-    console.log("Sending course " + course);
     res.status(200).json(course);
   });
 }
@@ -124,7 +121,6 @@ module.exports.addSyllabus = function (req, res) {
   });
 }
 
-
 module.exports.allCourses = function (req, res) {
   console.log("Sending Courses");
   Course.find({}, function (err, courses) {
@@ -135,4 +131,35 @@ module.exports.allCourses = function (req, res) {
     console.log("Sending course " + courses);
     res.status(200).json(courses);
   });
+}
+
+module.exports.handInAssignment = function (req, res) {
+  const { email, courseCode } = req.body;
+  Course.findOneAndUpdate(
+    { code: courseCode },
+    { $pull: { assigmentAnswers: { user: email } } },
+    { new: true },
+    function () {
+      Course.findOneAndUpdate({
+        code: courseCode
+      }, {
+        $push: {
+          assigmentAnswers: {
+            user: email,
+            assignment: req['files'].assignment
+          }
+        }
+      }, {
+        new: true
+      }, function (err, data) {
+        if (err) {
+          console.log("handing in assigment failed" + err);
+          res.status(404).json(err);
+        }
+        console.log("handing in assigment " + data);
+        res.status(200).json(data);
+      }
+      )
+    }
+  )
 }

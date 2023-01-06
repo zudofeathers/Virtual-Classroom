@@ -18,6 +18,7 @@ export class CourseComponent implements OnInit {
   courseName
   api
   course: any = { name: "", code: "" }
+  handedInAssignment = null;
   sessionStatus: boolean = false
   newSyllabus = "";
   httpOptions = {
@@ -41,6 +42,8 @@ export class CourseComponent implements OnInit {
           )
           this.course = res;
           this.course.assignment = pdf
+          this.handedInAssignment = res.assigmentAnswers.find(assignment => assignment.user === this.user.email);
+          console.log(this.handedInAssignment)
         });
     });
   }
@@ -92,5 +95,18 @@ export class CourseComponent implements OnInit {
       }
     }
 
+  }
+  onAssigmentHandIn(event) {
+    const formData = new FormData();
+    const file: File = event.target.files[0];
+    if (file) {
+      formData.append("courseCode", this.course.code);
+      formData.append("email", this.user.email);
+      formData.append("assignment", file, file.name);
+      this.http.post('/api/handInAssignment', formData)
+        .subscribe(res => {
+          console.log("assigment list:", res);
+        });
+    }
   }
 }

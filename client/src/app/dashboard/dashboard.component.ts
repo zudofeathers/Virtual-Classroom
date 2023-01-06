@@ -50,8 +50,6 @@ export class DashboardComponent {
     const file: File = event.target.files[0];
     if (file) {
       this.newcourse.assignment = file;
-      console.log("file", file)
-
     }
   }
   newCourse() {
@@ -65,11 +63,9 @@ export class DashboardComponent {
 
     this.http.post('/api/newCourse', formData)
       .subscribe((res: { code: string }) => {
-        console.log(res)
+        this.allCourses();
       });
-    // this.router.navigateByUrl('/newCourse');
   }
-
   allCourses() {
     console.log("Getting All Courses");
     this.http.get('/api/allCourses/', this.httpOptions)
