@@ -117,7 +117,7 @@ module.exports.addSyllabus = function (req, res) {
       res.status(404).json(err);
     }
     console.log("Sending course " + data);
-    res.status(200).json(data);
+    res.status(200).json(data.syllabus);
   });
 }
 
@@ -137,14 +137,14 @@ module.exports.handInAssignment = function (req, res) {
   const { email, courseCode } = req.body;
   Course.findOneAndUpdate(
     { code: courseCode },
-    { $pull: { assigmentAnswers: { user: email } } },
+    { $pull: { assignmentAnswers: { user: email } } },
     { new: true },
     function () {
       Course.findOneAndUpdate({
         code: courseCode
       }, {
         $push: {
-          assigmentAnswers: {
+          assignmentAnswers: {
             user: email,
             assignment: req['files'].assignment
           }
@@ -153,11 +153,11 @@ module.exports.handInAssignment = function (req, res) {
         new: true
       }, function (err, data) {
         if (err) {
-          console.log("handing in assigment failed" + err);
+          console.log("handing in assignment failed" + err);
           res.status(404).json(err);
         }
-        console.log("handing in assigment " + data);
-        res.status(200).json(data);
+        console.log("handing in assignment " + data);
+        res.status(200).json(req['files'].assignment);
       }
       )
     }

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService, UserDetails } from '../authentication.service';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Course } from '../modles/course';
 
 //let jitsi = require('https://meet.jit.si/external_api.js');
 declare function JitsiMeetExternalAPI(a, b): void;
@@ -14,10 +15,8 @@ declare function JitsiMeetExternalAPI(a, b): void;
 })
 export class CourseComponent implements OnInit {
   user: UserDetails;
-  courseCode
-  courseName
   api
-  course: any = { name: "", code: "" }
+  course: Course = { name: "", code: "", owner: "", users: [], assignment: null }
   handedInAssignment = null;
   sessionStatus: boolean = false
   newSyllabus = "";
@@ -26,24 +25,17 @@ export class CourseComponent implements OnInit {
   };
   constructor(private route: ActivatedRoute, private auth: AuthenticationService, private router: Router, private http: HttpClient) {
     this.route.params.subscribe(params => {
-      this.courseCode = params.courseCode;
-      this.course.code = params.courseCode;
-      this.http.get('/api/courseDetails/' + this.courseCode, this.httpOptions)
+      this.http.get('/api/courseDetails/' + params.courseCode, this.httpOptions)
         .subscribe((res: any) => {
-          let byteChars = atob(res.assignment.data); //To decrypt data
-          let dataArray = new Array(byteChars.length);
-          for (let i = 0; i < byteChars.length; i++) {
-            dataArray[i] = byteChars.charCodeAt(i);
-          }
-          let byteArray = new Uint8Array(dataArray)
-          let pdf = new Blob(
-            [byteArray],
-            { type: 'application/pdf' }
-          )
           this.course = res;
-          this.course.assignment = pdf
-          this.handedInAssignment = res.assigmentAnswers.find(assignment => assignment.user === this.user.email);
-          console.log(this.handedInAssignment)
+          if (!this.user.faculty) {
+            this.handedInAssignment = res.assignmentAnswers.find(assignment => assignment.user === this.user.email).assignment;
+          } else {
+            this.course.assignmentAnswers = res.assignmentAnswers.map(assignmentAnswer => ({
+              user: assignmentAnswer.user,
+              assignment: assignmentAnswer.assignment,
+            }));
+          }
         });
     });
   }
@@ -55,15 +47,24 @@ export class CourseComponent implements OnInit {
     });
 
   }
-  downloadAssignment() {
-    var downloadURL = URL.createObjectURL(this.course.assignment);
-    window.open(downloadURL)
+  downloadAssignment(assignment, fileType: string) {
+    console.log(fileType)
+    const decryptedAssignment = this.decryptAssignment(assignment, fileType);
+    const downloadURL = URL.createObjectURL(decryptedAssignment);
+    const downloadLink = document.createElement("a");
+
+    downloadLink.href = downloadURL;
+    downloadLink.download = assignment.name;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(downloadURL)
   }
   startSession() {
     console.log("Connecting to live class ");
     var domain = "meet.jit.si";
     var options = {
-      roomName: "VirtualClassroom-" + this.courseCode,// +"somerandom",
+      roomName: "VirtualClassroom-" + this.course.code,// +"somerandom",
       width: 700,
       height: 600,
       parentNode: document.querySelector('#meet')
@@ -88,15 +89,15 @@ export class CourseComponent implements OnInit {
             "course": this.course.code,
             "syllabus": this.newSyllabus
           }), this.httpOptions)
-          .subscribe(res => {
+          .subscribe((res: string[]) => {
             console.log(res);
-            this.course = res;
+            this.course.syllabus = res;
           });
       }
     }
 
   }
-  onAssigmentHandIn(event) {
+  onAssignmentHandIn(event) {
     const formData = new FormData();
     const file: File = event.target.files[0];
     if (file) {
@@ -104,9 +105,24 @@ export class CourseComponent implements OnInit {
       formData.append("email", this.user.email);
       formData.append("assignment", file, file.name);
       this.http.post('/api/handInAssignment', formData)
-        .subscribe(res => {
-          console.log("assigment list:", res);
+        .subscribe((res: any) => {
+          this.handedInAssignment = res;
+          console.log("assignment list:", res);
         });
     }
+  }
+  decryptAssignment(assignment, fileType: string): Blob {
+    console.log(assignment)
+    let byteChars = atob(assignment.data); //To decrypt data
+    let dataArray = new Array(byteChars.length);
+    for (let i = 0; i < byteChars.length; i++) {
+      dataArray[i] = byteChars.charCodeAt(i);
+    }
+    let byteArray = new Uint8Array(dataArray)
+    const pdf = new Blob(
+      [byteArray],
+      { type: `application/${fileType}` }
+    )
+    return pdf;
   }
 }

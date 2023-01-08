@@ -31,7 +31,7 @@ var courseSchema = new mongoose.Schema({
     assignment: {
         type: mongoose.Schema.Types.Mixed,
     },
-    assigmentAnswers: [{
+    assignmentAnswers: [{
         user: {
             type: String,
             required: true
