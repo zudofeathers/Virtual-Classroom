@@ -1,14 +1,6 @@
-<!-- <div class="view full-page-intro" style="background-image: url('http://backgroundcheckall.com/wp-content/uploads/2017/12/background-dark-blue-vintage.jpg'); background-repeat: no-repeat; background-size: cover;"> -->
-
 <div class="my-view container">
   <!--Main Navigation-->
   <header>
-    <!-- 
-        <div class"container my-view">
-
-        </div> -->
-
-    <!-- Sidebar -->
     <div class="side-nav sidebar-fixed position-fixed">
 
       <div class="list-group list-group-flush">
@@ -18,8 +10,6 @@
         </a>
         <a routerLink="/dashboard" class="list-group-item waves-effect ">
           <i class="fa fa-pie-chart mr-3"></i>Dashboard</a>
-        <a *ngIf="details?.faculty==false" class="list-group-item  list-group-item-action waves-effect">
-          <i class="fa fa-table mr-3"></i>Find new courses</a>
         <a routerLink="/profile" href="#" class="list-group-item active list-group-item-action waves-effect">
           <i class="fa fa-user mr-3"></i>Profile</a>
       </div>
@@ -159,30 +149,3 @@
   </main>
   <!--Main layout-->
 </div>
-
-<!-- </div> -->
-
-<!-- 
-
-<div class="container">
-  <div class="row">
-    
-     <div class="col-md-6">
-
-      <h1 class="form-signin-heading">Your profile</h1>
-
-      <div class="form-horizontal">
-        <div class="form-group">
-          <label class="col-sm-3 control-label">Full name</label>
-          <p class="form-control-static">{{ details?.name }}</p>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-3 control-label">Email</label>
-          <p class="form-control-static">{{ details?.email }}</p>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-</div> -->

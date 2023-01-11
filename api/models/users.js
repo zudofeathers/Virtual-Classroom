@@ -26,10 +26,6 @@ var userSchema = new mongoose.Schema({
     enum: ["male", "female"],
     default: "male"
   },
-  courses: {
-    type: [String],
-    default: []
-  }
 });
 
 userSchema.methods.setPassword = function (password) {
@@ -51,9 +47,7 @@ userSchema.methods.generateJwt = function () {
     email: this.email,
     name: this.name,
     exp: parseInt(expiry.getTime() / 1000),
-  }, "MY_SECRET"); // DO NOT KEEP YOUR SECRET IN THE CODE! change later
+  }, "MY_SECRET"); // TODO: Change later
 };
 
-// mongoose.model('Course', courseSchema,'courses');
-// 
 mongoose.model('User', userSchema);

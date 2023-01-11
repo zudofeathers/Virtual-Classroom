@@ -9,14 +9,12 @@ export interface UserDetails {
   email: string;
   name: string;
   faculty: boolean;
-  courses: [string]
   exp: number;
   iat: number;
   dob: Date;
   gender: string;
   phone: string;
   education: string;
-
 }
 
 interface TokenResponse {

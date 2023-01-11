@@ -14,7 +14,6 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 // [SH] Require Passport
 var passport = require('passport');
-const fileUpload = require('express-fileupload');
 
 // [SH] Bring in the data model
 require('./api/models/db');
@@ -26,7 +25,6 @@ require('./api/config/passport');
 var routesApi = require('./api/routes/index');
 
 var app = express();
-app.use(fileUpload());
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));

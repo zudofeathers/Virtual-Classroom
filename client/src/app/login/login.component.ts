@@ -28,11 +28,8 @@ export class LoginComponent {
   };
 
   mailPassword() {
-    console.log("Email for password: " + this.emailForPassword);
     this.http.post('/api/forgotPassword',
     JSON.stringify({"email":this.emailForPassword}), this.httpOptions)
-    .subscribe(res => console.log(res));
-    // this.router.navigateByUrl('/newCourse');
-    
+    .subscribe(res => console.log(res));    
   }
 }

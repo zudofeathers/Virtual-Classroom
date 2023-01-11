@@ -1,0 +1,1429 @@
+diff --git a/api/controllers/authentication.js b/api/controllers/authentication.js
+index 293dd74..9194459 100644
+--- a/api/controllers/authentication.js
++++ b/api/controllers/authentication.js
+@@ -2,22 +2,9 @@ var passport = require('passport');
+ var mongoose = require('mongoose');
+ var User = mongoose.model('User');
+ 
+-var sendJSONresponse = function (res, status, content) {
+-  res.status(status);
+-  res.json(content);
+-};
+-
+ module.exports.register = function (req, res) {
+ 
+-  // if(!req.body.name || !req.body.email || !req.body.password) {
+-  //   sendJSONresponse(res, 400, {
+-  //     "message": "All fields required"
+-  //   });
+-  //   return;
+-  // }
+-
+   var user = new User();
+-  console.log("Registering " + JSON.stringify(req.body));
+   user.name = req.body.name;
+   user.email = req.body.email;
+   user.faculty = req.body.faculty;
+@@ -27,7 +14,6 @@ module.exports.register = function (req, res) {
+     if (err) {
+       console.log("err", err)
+     } else {
+-      console.log("result", result)
+       var token;
+       token = user.generateJwt();
+       res.status(200);
+@@ -39,14 +25,6 @@ module.exports.register = function (req, res) {
+ };
+ 
+ module.exports.login = function (req, res) {
+-
+-  // if(!req.body.email || !req.body.password) {
+-  //   sendJSONresponse(res, 400, {
+-  //     "message": "All fields required"
+-  //   });
+-  //   return;
+-  // }
+-
+   passport.authenticate('local', function (err, user, info) {
+     var token;
+ 
+@@ -63,7 +41,6 @@ module.exports.login = function (req, res) {
+       res.json({
+         "token": token
+       });
+-      console.log("Logged in");
+     } else {
+       // If user is not found
+       res.status(401).json(info);
+@@ -74,13 +51,6 @@ module.exports.login = function (req, res) {
+ 
+ 
+ module.exports.forgotPassword = function (req, res) {
+-
+-  /* TODO :
+-   Retreive Email id
+-   Use User.find to check if user exists
+-   if yes send else send back error
+-  */
+-  console.log("Searching for " + req.body.email);
+   User.findOne({ email: req.body.email }, function (err, user) {
+     if (err) { return done(err); }
+     // If user is found in database
+diff --git a/api/controllers/course.js b/api/controllers/course.js
+deleted file mode 100644
+index 5abce89..0000000
+--- a/api/controllers/course.js
++++ /dev/null
+@@ -1,165 +0,0 @@
+-var mongoose = require('mongoose');
+-var Course = mongoose.model('Course');
+-var User = mongoose.model('User');
+-
+-module.exports.newCourse = function (req, res) {
+-  var course = new Course();
+-  course.name = req.body.name;
+-  course.code = req.body.code;
+-  course.owner = req.body.owner;
+-  course.users = [req.body.owner]; //owner also a user, add to user table also ...
+-  course.assignment = req['files'].assignment
+-
+-  course.save(function (err) {
+-    if (err) {
+-      console.log("Error..\n" + err);
+-      res.status(200);
+-    } else {
+-      console.log("Adding in User collection..");
+-      User.findOneAndUpdate({
+-        email: req.body.owner
+-      }, {
+-        $push: {
+-          courses: req.body.code
+-        }
+-      }, function (err, user) {
+-        if (err) {
+-          return done(err);
+-        }
+-        // If user is found in database, add course code to user 
+-        if (user) {
+-          // user.courses.push(req.body);
+-
+-          res.status(200);
+-          res.json({
+-            "code": req.body.code
+-          });
+-        } else {
+-          // If user is not found
+-          res.status(401).json(info);
+-        }
+-      });
+-
+-    }
+-  });
+-  console.log(course);
+-  console.log("Searching for " + req.body.owner);
+-  if (course) {
+-
+-  } else {
+-    console.log("Could not add new curse");
+-  }
+-};
+-
+-module.exports.addAssignment = function (req, res) {
+-  console.log("Searching and adding assignment " + req.params.course);
+-  var code = (req.params.course);
+-
+-  Course.findOneAndUpdate({
+-    code: code
+-  }, function (err, course) {
+-    if (err) {
+-      console.log(err)
+-      res.status(404).json(err);
+-    }
+-    console.log("Sending course " + course);
+-    res.status(200).json(course);
+-  });
+-}
+-
+-module.exports.courseDetails = function (req, res) {
+-  var code = (req.params.course);
+-
+-  Course.findOne({
+-    code: code
+-  }, function (err, course) {
+-    if (err) {
+-      console.log(err)
+-      res.status(404).json(err);
+-    }
+-    res.status(200).json(course);
+-  });
+-}
+-
+-module.exports.courseAssignment = function (req, res) {
+-  console.log("Searching and sending " + req.params.course);
+-  var code = (req.params.course);
+-
+-  Course.findOne({
+-    code: code
+-  }, function (err, course) {
+-    if (err) {
+-      console.log(err)
+-      res.status(404).json(err);
+-    }
+-    console.log("Sending course " + course);
+-
+-
+-    res.status(200).json(course.assignment);
+-  });
+-}
+-
+-module.exports.addSyllabus = function (req, res) {
+-  console.log("Adding to " + req.body.course);
+-  var code = (req.body.course);
+-
+-  Course.findOneAndUpdate({
+-    code: code
+-  }, {
+-    $push: {
+-      syllabus: req.body.syllabus
+-    }
+-  }, {
+-    new: true
+-  }, function (err, data) {
+-    if (err) {
+-      console.log(err)
+-      res.status(404).json(err);
+-    }
+-    console.log("Sending course " + data);
+-    res.status(200).json(data.syllabus);
+-  });
+-}
+-
+-module.exports.allCourses = function (req, res) {
+-  console.log("Sending Courses");
+-  Course.find({}, function (err, courses) {
+-    if (err) {
+-      console.log(err)
+-      res.status(404).json(err);
+-    }
+-    console.log("Sending course " + courses);
+-    res.status(200).json(courses);
+-  });
+-}
+-
+-module.exports.handInAssignment = function (req, res) {
+-  const { email, courseCode } = req.body;
+-  Course.findOneAndUpdate(
+-    { code: courseCode },
+-    { $pull: { assignmentAnswers: { user: email } } },
+-    { new: true },
+-    function () {
+-      Course.findOneAndUpdate({
+-        code: courseCode
+-      }, {
+-        $push: {
+-          assignmentAnswers: {
+-            user: email,
+-            assignment: req['files'].assignment
+-          }
+-        }
+-      }, {
+-        new: true
+-      }, function (err, data) {
+-        if (err) {
+-          console.log("handing in assignment failed" + err);
+-          res.status(404).json(err);
+-        }
+-        console.log("handing in assignment " + data);
+-        res.status(200).json(req['files'].assignment);
+-      }
+-      )
+-    }
+-  )
+-}
+diff --git a/api/controllers/profile.js b/api/controllers/profile.js
+index 4be9b13..3c7a0f4 100644
+--- a/api/controllers/profile.js
++++ b/api/controllers/profile.js
+@@ -2,9 +2,6 @@ var mongoose = require('mongoose');
+ var User = mongoose.model('User');
+ 
+ module.exports.profileRead = function (req, res) {
+-  console.log("testing")
+-  console.log("req", req.auth)
+-  // console.log("res", res)
+   if (!req.auth._id) {
+     res.status(401).json({
+       "message": "UnauthorizedError: private profile"
+@@ -12,7 +9,6 @@ module.exports.profileRead = function (req, res) {
+   } else {
+     User.findById(req.auth._id)
+       .exec(function (err, user) {
+-        console.log("Sending..\n" + user);
+         res.status(200).json(user);
+       });
+   }
+@@ -20,19 +16,16 @@ module.exports.profileRead = function (req, res) {
+ };
+ 
+ module.exports.editProfile = function (req, res) {
+-  console.log("Editing Profile " + JSON.stringify(req.body));
+   var id = req.body._id;
+   User.findByIdAndUpdate(id, {
+     dob: req.body.dob,
+     gender: req.body.gender,
+     phone: req.body.phone,
+     education: req.body.education
+-    //TODO : same for other updates
+   }, { new: true }, function (err, user) {
+     if (err)
+       console.log(err);
+     else {
+-      console.log("Updated ..");
+       res.status(200).json(user);
+     }
+   });
+diff --git a/api/models/courses.js b/api/models/courses.js
+deleted file mode 100644
+index 22b1806..0000000
+--- a/api/models/courses.js
++++ /dev/null
+@@ -1,46 +0,0 @@
+-var mongoose = require('mongoose');
+-
+-// Course collection schema
+-var courseSchema = new mongoose.Schema({
+-    name: {
+-        type: String,
+-        required: true
+-    },
+-    code: {
+-        type: String,
+-        unique: true
+-    },
+-    //owner:mongoose.Schema.Types.ObjectId,
+-    owner: {
+-        type: String,
+-        required: true
+-    },
+-    users: {
+-        //type: [mongoose.Schema.Types.ObjectId],
+-        type: [String],
+-        default: []
+-    },
+-    forums: [{
+-        sender: mongoose.Schema.Types.ObjectId,
+-        msg: String
+-    }],
+-    syllabus: {
+-        type: [String],
+-        // required: true
+-    },
+-    assignment: {
+-        type: mongoose.Schema.Types.Mixed,
+-    },
+-    assignmentAnswers: [{
+-        user: {
+-            type: String,
+-            required: true
+-        },
+-        assignment: {
+-            type: mongoose.Schema.Types.Mixed,
+-            required: true
+-        }
+-    }],
+-});
+-
+-mongoose.model('Course', courseSchema, 'courses');
+\ No newline at end of file
+diff --git a/api/models/db.js b/api/models/db.js
+index 725d7da..2f8413e 100644
+--- a/api/models/db.js
++++ b/api/models/db.js
+@@ -26,26 +26,13 @@ gracefulShutdown = function (msg, callback) {
+     callback();
+   });
+ };
+-// For nodemon restarts
+-/*process.once('SIGUSR2', function() {
+-  gracefulShutdown('nodemon restart', function() {
+-    process.kill(process.pid, 'SIGUSR2');
+-  });
+-});*/
++
+ // For app termination
+ process.on('SIGINT', function () {
+   gracefulShutdown('app termination', function () {
+     process.exit(0);
+   });
+ });
+-/*
+-// For Heroku app termination
+-process.on('SIGTERM', function() {
+-  gracefulShutdown('Heroku app termination', function() {
+-    process.exit(0);
+-  });
+-});
+-*/
+-// BRING IN YOUR SCHEMAS & MODELS
++
++// BRING IN SCHEMAS & MODELS
+ require('./users');
+-require('./courses');
+\ No newline at end of file
+diff --git a/api/models/users.js b/api/models/users.js
+index ce6f34d..de7b26e 100644
+--- a/api/models/users.js
++++ b/api/models/users.js
+@@ -26,10 +26,6 @@ var userSchema = new mongoose.Schema({
+     enum: ["male", "female"],
+     default: "male"
+   },
+-  courses: {
+-    type: [String],
+-    default: []
+-  }
+ });
+ 
+ userSchema.methods.setPassword = function (password) {
+@@ -51,9 +47,7 @@ userSchema.methods.generateJwt = function () {
+     email: this.email,
+     name: this.name,
+     exp: parseInt(expiry.getTime() / 1000),
+-  }, "MY_SECRET"); // DO NOT KEEP YOUR SECRET IN THE CODE! change later
++  }, "MY_SECRET"); // TODO: Change later
+ };
+ 
+-// mongoose.model('Course', courseSchema,'courses');
+-// 
+ mongoose.model('User', userSchema);
+diff --git a/api/routes/index.js b/api/routes/index.js
+index da8c196..9f5ad47 100644
+--- a/api/routes/index.js
++++ b/api/routes/index.js
+@@ -9,13 +9,9 @@ var auth = jwt({
+ 
+ var ctrlProfile = require('../controllers/profile');
+ var ctrlAuth = require('../controllers/authentication');
+-var ctrlCourse = require('../controllers/course');
+ // profile
+ router.get('/profile', auth, ctrlProfile.profileRead);
+ 
+-// courses
+-//router.get('/courses', auth, );
+-
+ // authentication
+ router.post('/register', ctrlAuth.register);
+ router.post('/login', ctrlAuth.login);
+@@ -23,18 +19,6 @@ router.post('/login', ctrlAuth.login);
+ //edit profile
+ router.post('/editProfile', ctrlProfile.editProfile);
+ 
+-//new course
+-router.post('/newCourse', ctrlCourse.newCourse);
+-router.post('/addAssignment/:course', ctrlCourse.addAssignment);
+-
+-//retrieve user's courses
+-router.get('/courseDetails/:course', ctrlCourse.courseDetails);
+-router.get('/courseAssignment/:course', ctrlCourse.courseAssignment);
+-router.get('/allCourses', ctrlCourse.allCourses);
+-router.post('/addSyllabus', ctrlCourse.addSyllabus);
+-router.post('/handInAssignment', ctrlCourse.handInAssignment);
+-
+-
+ //Forgot Password
+ router.post('/forgotPassword', ctrlAuth.forgotPassword);
+ 
+diff --git a/app.js b/app.js
+index 70e70d7..ab4e987 100644
+--- a/app.js
++++ b/app.js
+@@ -14,7 +14,6 @@ var bodyParser = require('body-parser');
+ var cors = require('cors');
+ // [SH] Require Passport
+ var passport = require('passport');
+-const fileUpload = require('express-fileupload');
+ 
+ // [SH] Bring in the data model
+ require('./api/models/db');
+@@ -26,7 +25,6 @@ require('./api/config/passport');
+ var routesApi = require('./api/routes/index');
+ 
+ var app = express();
+-app.use(fileUpload());
+ app.use(express.static(path.join(__dirname, 'client', 'dist')));
+ // view engine setup
+ //app.set('views', path.join(__dirname, 'views'));
+diff --git a/client/src/app/app.component.html b/client/src/app/app.component.html
+index 6810e56..3aa212c 100644
+--- a/client/src/app/app.component.html
++++ b/client/src/app/app.component.html
+@@ -3,15 +3,10 @@
+ <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+   <!-- Brand -->
+     <a class="navbar-brand" routerLink="{{auth.isLoggedIn() ? '/dashboard' : '/'}}">
+-      <!-- <a class="navbar-brand" href="#">
+-          <img src="assets/images/icon.png" height="80" >
+-     </a>  -->
+      <i class="fa fa-graduation-cap"></i>
+       <strong>{{title}}</strong>
+     </a><div class="container">
+ 
+-    
+-
+     <!-- Collapse -->
+     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+       aria-expanded="false" aria-label="Toggle navigation">
+diff --git a/client/src/app/app.module.ts b/client/src/app/app.module.ts
+index 644b03d..41d7f29 100644
+--- a/client/src/app/app.module.ts
++++ b/client/src/app/app.module.ts
+@@ -11,16 +11,12 @@ import { RegisterComponent } from './register/register.component';
+ import { HomeComponent } from './home/home.component';
+ import { AuthenticationService } from './authentication.service';
+ import { AuthGuardService } from './auth-guard.service';
+-import { DashboardComponent } from './dashboard/dashboard.component';
+-import { CourseComponent } from './course/course.component';
+ 
+ const routes: Routes = [
+   { path: '', component: HomeComponent },
+   { path: 'login', component: LoginComponent },
+   { path: 'register', component: RegisterComponent },
+   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuardService] },
+-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuardService] },
+-  { path: 'course/:courseCode', component: CourseComponent, canActivate: [AuthGuardService] }
+ ];
+ 
+ @NgModule({
+@@ -30,8 +26,6 @@ const routes: Routes = [
+     LoginComponent,
+     RegisterComponent,
+     HomeComponent,
+-    DashboardComponent,
+-    CourseComponent
+   ],
+   imports: [
+     BrowserModule,
+diff --git a/client/src/app/authentication.service.ts b/client/src/app/authentication.service.ts
+index b498513..40ee00f 100644
+--- a/client/src/app/authentication.service.ts
++++ b/client/src/app/authentication.service.ts
+@@ -9,14 +9,12 @@ export interface UserDetails {
+   email: string;
+   name: string;
+   faculty: boolean;
+-  courses: [string]
+   exp: number;
+   iat: number;
+   dob: Date;
+   gender: string;
+   phone: string;
+   education: string;
+-
+ }
+ 
+ interface TokenResponse {
+diff --git a/client/src/app/course/course.component.css b/client/src/app/course/course.component.css
+deleted file mode 100644
+index 1f14743..0000000
+--- a/client/src/app/course/course.component.css
++++ /dev/null
+@@ -1,23 +0,0 @@
+-.my-main {
+-   padding-left: 0%;
+-}
+-
+-::-webkit-input-placeholder {
+-   text-align: center;
+-}
+-
+-:-moz-placeholder {
+-   /* Firefox 18- */
+-   text-align: center;
+-}
+-
+-::-moz-placeholder {
+-   /* Firefox 19+ */
+-   text-align: center;
+-}
+-
+-:-ms-input-placeholder {
+-   text-align: center;
+-}
+-
+-.syllabus {}
+\ No newline at end of file
+diff --git a/client/src/app/course/course.component.html b/client/src/app/course/course.component.html
+deleted file mode 100644
+index dfc2573..0000000
+--- a/client/src/app/course/course.component.html
++++ /dev/null
+@@ -1,114 +0,0 @@
+-<!-- Full Page Intro -->
+-
+-<!-- <div class="view full-page-intro"  style="background-image: url('https://png.pngtree.com/thumb_back/fw800/back_pic/03/99/62/8857fa0902ae111.jpg'); background-repeat: no-repeat; background-size: cover;"> -->
+-<div>
+-	<div class="my-view container">
+-
+-		<main class="my-main mx-lg-5 text-center">
+-
+-			<div class="container-fluid mt-5">
+-
+-				<!-- Heading -->
+-				<div class="card mb-4 wow fadeIn">
+-					<!--Card content-->
+-					<div class="card-body d-sm-flex justify-content-between">
+-						<h4 class="mb-2 mb-sm-0 pt-1">Welcome to {{course.code}} - {{course.name}}</h4>
+-						<button type="button" *ngIf="!sessionStatus" class="btn btn-primary" (click)="startSession()">
+-							<i class="fa fa-tv mr-3"></i>Start Session</button>
+-						<button type="button" *ngIf="sessionStatus" class="btn btn-danger" (click)="stopSession()">
+-							<i class="fa fa-stop mr-3"></i>Stop Session</button>
+-					</div>
+-				</div>
+-				<!-- Heading -->
+-
+-
+-				<div id="meet" class=""></div>
+-
+-			</div>
+-
+-			<div class="container-fluid mt-5">
+-
+-			</div>
+-
+-			<div class="container-fluid mt-5">
+-
+-				<!-- Heading -->
+-				<div class="card mb-4 wow fadeIn">
+-
+-					<!--Card content-->
+-					<div class="card-body d-sm-flex justify-content-between">
+-						<h4 class="mb-2 mb-sm-0 pt-1"> Course Materials</h4>
+-					</div>
+-				</div>
+-
+-				<div class="container row">
+-					<div class="col-md-6 mb-4">
+-						<div class="card">
+-							<div>
+-								<h4 class="mb-3 mb-sm-2 pt-1"> Syllabus</h4>
+-								<div class="p-2">
+-									<ul class="list-group">
+-										<li class="list-group-item" *ngFor="let item of course.syllabus">{{item}}</li>
+-									</ul>
+-									<input (keydown)="addNew($event)" placeholder="Add new" class="form-control"
+-										[ngModelOptions]="{standalone: true}" [(ngModel)]="newSyllabus">
+-								</div>
+-							</div>
+-						</div>
+-					</div>
+-
+-					<div class="col-md-6 mb-4">
+-
+-						<div class="card mb-4">
+-							<button (click)="downloadAssignment(course.assignment, 'pdf')" class="btn btn-primary m-4"
+-								type="submit"><i class="fa fa-download mr-3"></i>Download assignment!</button>
+-						</div>
+-
+-						<div class="card p-2" *ngIf="!this.user.faculty">
+-							<div>
+-								<label for="profile_pic"><b>Upload your assignment here</b></label><input type="file"
+-									(change)="onAssignmentHandIn($event)" id="assignment" name="assignment"
+-									accept=".zip">
+-							</div>
+-							<div class="pt-1" *ngIf="handedInAssignment">
+-								<span class="btn-success">You have already submitted your assignment called:
+-									{{handedInAssignment.name}}</span><br>
+-								<span class="btn-danger">Uploading a new zip file will override your old
+-									submission!</span>
+-							</div>
+-						</div>
+-
+-						<div class="card p-2" *ngIf="this.user.faculty">
+-							<h4>Submitted student assignments:</h4>
+-							<div *ngFor="let assignment of course.assignmentAnswers;">
+-								<label for="assignment.user">{{assignment.user}}:</label>
+-								<a><button (click)="downloadAssignment(assignment.assignment, 'zip')"
+-										class="btn btn-primary m-4" type="submit"><i
+-											class="fa fa-download mr-3"></i>Download answer</button></a>
+-
+-							</div>
+-						</div>
+-
+-					</div>
+-				</div>
+-			</div>
+-		</main>
+-	</div>
+-</div>
+-
+-
+-<!-- <div class="view container">
+-	<div class="row">
+-		<div class = "col-lg-4">
+-		<h1>
+-			Welcome to Course {{courseCode}}
+-		</h1>
+-		<button type="button" class="btn btn-success" (click)="startSession()">Live Classroom Session</button>
+-		<hr>
+-		</div>
+-		<div class="col-lg-8">
+-			<div id="meet" class="">
+-			</div>
+-		</div>
+-	</div>
+-</div> -->
+\ No newline at end of file
+diff --git a/client/src/app/course/course.component.spec.ts b/client/src/app/course/course.component.spec.ts
+deleted file mode 100644
+index 228b1ea..0000000
+--- a/client/src/app/course/course.component.spec.ts
++++ /dev/null
+@@ -1,25 +0,0 @@
+-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+-
+-import { CourseComponent } from './course.component';
+-
+-describe('CourseComponent', () => {
+-  let component: CourseComponent;
+-  let fixture: ComponentFixture<CourseComponent>;
+-
+-  // beforeEach(async(() => {
+-  //   TestBed.configureTestingModule({
+-  //     declarations: [ CourseComponent ]
+-  //   })
+-  //   .compileComponents();
+-  // }));
+-
+-  // beforeEach(() => {
+-  //   fixture = TestBed.createComponent(CourseComponent);
+-  //   component = fixture.componentInstance;
+-  //   fixture.detectChanges();
+-  // });
+-
+-  // it('should create', () => {
+-  //   expect(component).toBeTruthy();
+-  // });
+-});
+diff --git a/client/src/app/course/course.component.ts b/client/src/app/course/course.component.ts
+deleted file mode 100644
+index 1294fac..0000000
+--- a/client/src/app/course/course.component.ts
++++ /dev/null
+@@ -1,128 +0,0 @@
+-import { Component, OnInit } from '@angular/core';
+-import { ActivatedRoute } from '@angular/router';
+-import { AuthenticationService, UserDetails } from '../authentication.service';
+-import { Router } from '@angular/router';
+-import { HttpClient, HttpHeaders } from '@angular/common/http';
+-import { Course } from '../modles/course';
+-
+-//let jitsi = require('https://meet.jit.si/external_api.js');
+-declare function JitsiMeetExternalAPI(a, b): void;
+-
+-@Component({
+-  // selector: 'app-course',
+-  templateUrl: './course.component.html',
+-  styleUrls: ['./course.component.css']
+-})
+-export class CourseComponent implements OnInit {
+-  user: UserDetails;
+-  api
+-  course: Course = { name: "", code: "", owner: "", users: [], assignment: null }
+-  handedInAssignment = null;
+-  sessionStatus: boolean = false
+-  newSyllabus = "";
+-  httpOptions = {
+-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+-  };
+-  constructor(private route: ActivatedRoute, private auth: AuthenticationService, private router: Router, private http: HttpClient) {
+-    this.route.params.subscribe(params => {
+-      this.http.get('/api/courseDetails/' + params.courseCode, this.httpOptions)
+-        .subscribe((res: any) => {
+-          this.course = res;
+-          if (!this.user.faculty) {
+-            this.handedInAssignment = res.assignmentAnswers.find(assignment => assignment.user === this.user.email).assignment;
+-          } else {
+-            this.course.assignmentAnswers = res.assignmentAnswers.map(assignmentAnswer => ({
+-              user: assignmentAnswer.user,
+-              assignment: assignmentAnswer.assignment,
+-            }));
+-          }
+-        });
+-    });
+-  }
+-  ngOnInit() {
+-    this.auth.profile().subscribe(user => {
+-      this.user = user;
+-    }, (err) => {
+-      console.error(err);
+-    });
+-
+-  }
+-  downloadAssignment(assignment, fileType: string) {
+-    console.log(fileType)
+-    const decryptedAssignment = this.decryptAssignment(assignment, fileType);
+-    const downloadURL = URL.createObjectURL(decryptedAssignment);
+-    const downloadLink = document.createElement("a");
+-
+-    downloadLink.href = downloadURL;
+-    downloadLink.download = assignment.name;
+-    document.body.appendChild(downloadLink);
+-    downloadLink.click();
+-    document.body.removeChild(downloadLink);
+-    URL.revokeObjectURL(downloadURL)
+-  }
+-  startSession() {
+-    console.log("Connecting to live class ");
+-    var domain = "meet.jit.si";
+-    var options = {
+-      roomName: "VirtualClassroom-" + this.course.code,// +"somerandom",
+-      width: 700,
+-      height: 600,
+-      parentNode: document.querySelector('#meet')
+-    }
+-    this.api = new JitsiMeetExternalAPI(domain, options);
+-    this.sessionStatus = true;
+-  }
+-  stopSession() {
+-    this.api.dispose();
+-    this.sessionStatus = false;
+-  }
+-  sendMessage() {
+-  }
+-  addNew(event) {
+-    if (event.keyCode == 13) {
+-      console.log("Enter pressed.");
+-      if (this.newSyllabus) {
+-        console.log("Adding Syllabus..");
+-
+-        this.http.post('/api/addSyllabus',
+-          JSON.stringify({
+-            "course": this.course.code,
+-            "syllabus": this.newSyllabus
+-          }), this.httpOptions)
+-          .subscribe((res: string[]) => {
+-            console.log(res);
+-            this.course.syllabus = res;
+-          });
+-      }
+-    }
+-
+-  }
+-  onAssignmentHandIn(event) {
+-    const formData = new FormData();
+-    const file: File = event.target.files[0];
+-    if (file) {
+-      formData.append("courseCode", this.course.code);
+-      formData.append("email", this.user.email);
+-      formData.append("assignment", file, file.name);
+-      this.http.post('/api/handInAssignment', formData)
+-        .subscribe((res: any) => {
+-          this.handedInAssignment = res;
+-          console.log("assignment list:", res);
+-        });
+-    }
+-  }
+-  decryptAssignment(assignment, fileType: string): Blob {
+-    console.log(assignment)
+-    let byteChars = atob(assignment.data); //To decrypt data
+-    let dataArray = new Array(byteChars.length);
+-    for (let i = 0; i < byteChars.length; i++) {
+-      dataArray[i] = byteChars.charCodeAt(i);
+-    }
+-    let byteArray = new Uint8Array(dataArray)
+-    const pdf = new Blob(
+-      [byteArray],
+-      { type: `application/${fileType}` }
+-    )
+-    return pdf;
+-  }
+-}
+diff --git a/client/src/app/dashboard/dashboard.component.css b/client/src/app/dashboard/dashboard.component.css
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/client/src/app/dashboard/dashboard.component.html b/client/src/app/dashboard/dashboard.component.html
+deleted file mode 100644
+index ae1b67e..0000000
+--- a/client/src/app/dashboard/dashboard.component.html
++++ /dev/null
+@@ -1,201 +0,0 @@
+-<!-- Full Page Intro -->
+-<div class="view full-page-intro"
+-  style="background-image: url('https://images.pexels.com/photos/745365/pexels-photo-745365.jpeg?w=1260&h=750&dpr=2&auto=compress&cs=tinysrgb'); background-repeat: no-repeat; background-size: cover;">
+-
+-  <div class="my-view container">
+-    <!--Main Navigation-->
+-    <header>
+-      <!-- 
+-      <div class"container my-view">
+-  
+-      </div> -->
+-
+-      <!-- Sidebar -->
+-      <div class="side-nav sidebar-fixed position-fixed">
+-
+-        <div class="list-group list-group-flush">
+-
+-          <a href="#" class="list-group-item waves-effect">
+-            <h3>Virtual Classroom</h3>
+-          </a>
+-          <a (click)="find = false" class="list-group-item waves-effect active">
+-            <i class="fa fa-pie-chart mr-3"></i>Dashboard</a>
+-          <a *ngIf="user?.faculty==false" (click)="allCourses()"
+-            class="list-group-item list-group-item-action waves-effect">
+-            <i class="fa fa-table mr-3"></i>Find new courses</a>
+-          <a routerLink="/profile" href="#" class="list-group-item list-group-item-action waves-effect">
+-            <i class="fa fa-user mr-3"></i>Profile</a>
+-          <a *ngIf="user?.faculty" data-toggle="modal" data-target="#exampleModal"
+-            class="list-group-item list-group-item-action waves-effect">
+-            <i class="fa fa-plus mr-3"></i>New Course </a>
+-
+-          <!-- Modal -->
+-          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+-            aria-hidden="true">
+-            <div class="modal-dialog" role="document">
+-              <div class="modal-content">
+-                <div class="modal-header">
+-                  <h5 class="modal-title" id="exampleModalLabel">Add new course</h5>
+-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+-                    <span aria-hidden="true">&times;</span>
+-                  </button>
+-                </div>
+-                <div class="modal-body">
+-                  <div class="md-form mb-5">
+-                    <i class="fa fa-user prefix grey-text"></i>
+-                    <input type="text" id="courseCode" class="form-control" [(ngModel)]="newcourse.code">
+-                    <label data-error="wrong" data-success="right" for="courseCode">Course Code</label>
+-                  </div>
+-                  <div class="md-form mb-5">
+-                    <i class="fa fa-user prefix grey-text"></i>
+-                    <input type="text" id="courseName" class="form-control" [(ngModel)]="newcourse.name">
+-                    <label data-error="wrong" data-success="right" for="courseName">Course Name</label>
+-                  </div>
+-                  <div class="md-form mb-5">
+-                    <i class="fa fa-upload prefix grey-text"></i>
+-                    <input type="file" accept=".pdf" id="courseAssignment" class="form-control"
+-                      (change)="onFileSelected($event)">
+-                    <label class="active" data-error="wrong" data-success="right"
+-                      for="courseAssignment">Assignment</label>
+-                  </div>
+-                </div>
+-                <div class="modal-footer">
+-
+-                  <button class="btn btn-unique" (click)="newCourse()">Add course
+-                    <i class="fa fa-paper-plane-o ml-1"></i>
+-                  </button>
+-                </div>
+-              </div>
+-            </div>
+-          </div>
+-        </div>
+-
+-      </div>
+-      <!-- Sidebar -->
+-
+-    </header>
+-    <!--Main Navigation-->
+-
+-    <!--Main layout-->
+-    <main class="mx-lg-5">
+-      <div class="container-fluid mt-5">
+-
+-        <!-- Heading -->
+-        <div class="card mb-4 wow fadeIn">
+-
+-          <!--Card content-->
+-          <div class="card-body d-sm-flex justify-content-between">
+-            <h4 class="mb-2 mb-sm-0 pt-1">{{ user?.name | titlecase }}'s Dashboard</h4>
+-          </div>
+-
+-        </div>
+-        <!-- Heading -->
+-
+-
+-        <!--Card group-->
+-        <div *ngIf="!find" class="card-deck">
+-          <!-- <template [ngIf]="courses"> -->
+-          <div *ngFor="let course of courses" class="wow fadeIn">
+-            <a routerLink="{{'/course/'+course.code}}">
+-              <!--Card-->
+-              <div class="card mb-4">
+-
+-                <!--Card content-->
+-                <div class="card-body">
+-
+-                  <!--Title-->
+-                  <h4 class="card-title">
+-
+-                    {{course.code}} - {{course.name}}</h4>
+-
+-                  <!--Text-->
+-                  <!-- <p class="card-text">Course Description</p> -->
+-
+-                  <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+-                  <button type="button" class="btn btn-blue btn-md">Go to Course Page</button>
+-                </div>
+-                <!--Card content-->
+-
+-              </div>
+-              <!--Card-->
+-            </a>
+-          </div>
+-          <!-- </template> -->
+-
+-
+-        </div>
+-        <!--Card group-->
+-
+-
+-
+-        <div *ngIf="find" class="card-deck">
+-          <!-- <template [ngIf]="courses"> -->
+-          <div *ngFor="let course of list" class="wow fadeIn">
+-            <a routerLink="{{'/course/'+course.code}}">
+-              <!--Card-->
+-              <div class="card mb-4">
+-
+-                <!--Card content-->
+-                <div class="card-body">
+-
+-                  <!--Title-->
+-                  <h4 class="card-title">
+-
+-                    {{course.code}} - {{course.name}}</h4>
+-
+-                  <!--Text-->
+-                  <!-- <p class="card-text">Course Description</p> -->
+-
+-                  <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+-                  <button type="button" class="btn btn-blue btn-md">Go to Course Page</button>
+-                </div>
+-                <!--Card content-->
+-
+-              </div>
+-              <!--Card-->
+-            </a>
+-          </div>
+-          <!-- </template> -->
+-
+-
+-        </div>
+-        <!--Card group-->
+-
+-      </div>
+-    </main>
+-    <!--Main layout-->
+-
+-  </div>
+-</div>
+-
+-
+-
+-
+-
+-
+-
+-
+-<!-- 
+-
+-
+-<div class="container">
+-  <h1>    
+-    {{user?.name | titlecase}}'s Dashboard 
+-  </h1>
+-
+-<div>
+-  <span *ngIf="user?.faculty" class="label label-primary">Faculty</span>
+-  <span *ngIf="!user?.faculty" class="label label-success">Student</span>
+-</div>
+-<hr>
+-<div *ngIf="user?.faculty">
+-  <button type="button" class="btn btn-success" (click)="newCourse()">New Course</button>
+-</div>
+-
+-<div class="container">
+-  <div *ngFor="let course of users?.courses">
+-        
+-  </div>
+-</div>
+-
+-</div> -->
+\ No newline at end of file
+diff --git a/client/src/app/dashboard/dashboard.component.spec.ts b/client/src/app/dashboard/dashboard.component.spec.ts
+deleted file mode 100644
+index 3ac1197..0000000
+--- a/client/src/app/dashboard/dashboard.component.spec.ts
++++ /dev/null
+@@ -1,25 +0,0 @@
+-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+-
+-import { DashboardComponent } from './dashboard.component';
+-
+-describe('DashboardComponent', () => {
+-  let component: DashboardComponent;
+-  let fixture: ComponentFixture<DashboardComponent>;
+-
+-  // beforeEach(async(() => {
+-  //   TestBed.configureTestingModule({
+-  //     declarations: [ DashboardComponent ]
+-  //   })
+-  //   .compileComponents();
+-  // }));
+-
+-  // beforeEach(() => {
+-  //   fixture = TestBed.createComponent(DashboardComponent);
+-  //   component = fixture.componentInstance;
+-  //   fixture.detectChanges();
+-  // });
+-
+-  // it('should create', () => {
+-  //   expect(component).toBeTruthy();
+-  // });
+-});
+diff --git a/client/src/app/dashboard/dashboard.component.ts b/client/src/app/dashboard/dashboard.component.ts
+deleted file mode 100644
+index 1ad67b2..0000000
+--- a/client/src/app/dashboard/dashboard.component.ts
++++ /dev/null
+@@ -1,79 +0,0 @@
+-import { Component, OnInit } from '@angular/core';
+-import { AuthenticationService, UserDetails } from '../authentication.service';
+-import { Router } from '@angular/router';
+-import { HttpClient, HttpHeaders } from '@angular/common/http';
+-
+-@Component({
+-  /*selector: 'app-dashboard',*/
+-  templateUrl: './dashboard.component.html',
+-  styleUrls: ['./dashboard.component.css']
+-})
+-
+-export class DashboardComponent {
+-  user: UserDetails;
+-  courses: Object[] = []
+-  newcourse = {
+-    code: "",
+-    name: "",
+-    owner: "",
+-    assignment: null,
+-  };
+-  find = false;
+-  list: Object = [];
+-
+-  constructor(private auth: AuthenticationService, private router: Router, private http: HttpClient) { }
+-  httpOptions = {
+-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+-  };
+-  ngOnInit() {
+-    this.auth.profile().subscribe(user => {
+-      this.user = user;
+-      //Log the user details
+-      console.log(user.courses);
+-      //Load MyCourses
+-      for (var course in user.courses) {
+-
+-        console.log("Requesting " + user.courses[course]);
+-        this.http.get('/api/courseDetails/' + user.courses[course], this.httpOptions)
+-          .subscribe(res => {
+-            console.log(res);
+-            this.courses.push(res);
+-          });
+-      }
+-      this.newcourse.owner = user.email;
+-    }, (err) => {
+-      console.error(err);
+-    });
+-
+-  }
+-  onFileSelected(event) {
+-    const file: File = event.target.files[0];
+-    if (file) {
+-      this.newcourse.assignment = file;
+-    }
+-  }
+-  newCourse() {
+-    console.log("New course is being created", this.newcourse.assignment);
+-
+-    const formData = new FormData();
+-    formData.append("assignment", this.newcourse.assignment, this.newcourse.assignment.name);
+-    formData.append("name", this.newcourse.name);
+-    formData.append("code", this.newcourse.code);
+-    formData.append("owner", this.newcourse.owner);
+-
+-    this.http.post('/api/newCourse', formData)
+-      .subscribe((res: { code: string }) => {
+-        this.allCourses();
+-      });
+-  }
+-  allCourses() {
+-    console.log("Getting All Courses");
+-    this.http.get('/api/allCourses/', this.httpOptions)
+-      .subscribe(res => {
+-        console.log(res);
+-        this.list = res;
+-        this.find = true;
+-      });
+-  }
+-
+-}
+diff --git a/client/src/app/login/login.component.ts b/client/src/app/login/login.component.ts
+index 3935251..3511df7 100644
+--- a/client/src/app/login/login.component.ts
++++ b/client/src/app/login/login.component.ts
+@@ -28,11 +28,8 @@ export class LoginComponent {
+   };
+ 
+   mailPassword() {
+-    console.log("Email for password: " + this.emailForPassword);
+     this.http.post('/api/forgotPassword',
+     JSON.stringify({"email":this.emailForPassword}), this.httpOptions)
+-    .subscribe(res => console.log(res));
+-    // this.router.navigateByUrl('/newCourse');
+-    
++    .subscribe(res => console.log(res));    
+   }
+ }
+diff --git a/client/src/app/modles/course.ts b/client/src/app/modles/course.ts
+deleted file mode 100644
+index 42e3d06..0000000
+--- a/client/src/app/modles/course.ts
++++ /dev/null
+@@ -1,11 +0,0 @@
+-export type Course = {
+-    name: string;
+-    code: string;
+-    owner: string;
+-    users: string[];
+-    assignment: Object;
+-    assignmentAnswers?: AssignmentAnswer[]
+-    syllabus?: string[];
+-}
+-
+-export type AssignmentAnswer = { user: string, assignment: File }
+\ No newline at end of file
+diff --git a/client/src/app/profile/profile.component.html b/client/src/app/profile/profile.component.html
+index af8107c..ee0301e 100644
+--- a/client/src/app/profile/profile.component.html
++++ b/client/src/app/profile/profile.component.html
+@@ -1,14 +1,6 @@
+-<!-- <div class="view full-page-intro" style="background-image: url('http://backgroundcheckall.com/wp-content/uploads/2017/12/background-dark-blue-vintage.jpg'); background-repeat: no-repeat; background-size: cover;"> -->
+-
+ <div class="my-view container">
+   <!--Main Navigation-->
+   <header>
+-    <!-- 
+-        <div class"container my-view">
+-
+-        </div> -->
+-
+-    <!-- Sidebar -->
+     <div class="side-nav sidebar-fixed position-fixed">
+ 
+       <div class="list-group list-group-flush">
+@@ -18,8 +10,6 @@
+         </a>
+         <a routerLink="/dashboard" class="list-group-item waves-effect ">
+           <i class="fa fa-pie-chart mr-3"></i>Dashboard</a>
+-        <a *ngIf="details?.faculty==false" class="list-group-item  list-group-item-action waves-effect">
+-          <i class="fa fa-table mr-3"></i>Find new courses</a>
+         <a routerLink="/profile" href="#" class="list-group-item active list-group-item-action waves-effect">
+           <i class="fa fa-user mr-3"></i>Profile</a>
+       </div>
+@@ -158,31 +148,4 @@
+     </div>
+   </main>
+   <!--Main layout-->
+-</div>
+-
+-<!-- </div> -->
+-
+-<!-- 
+-
+-<div class="container">
+-  <div class="row">
+-    
+-     <div class="col-md-6">
+-
+-      <h1 class="form-signin-heading">Your profile</h1>
+-
+-      <div class="form-horizontal">
+-        <div class="form-group">
+-          <label class="col-sm-3 control-label">Full name</label>
+-          <p class="form-control-static">{{ details?.name }}</p>
+-        </div>
+-        <div class="form-group">
+-          <label class="col-sm-3 control-label">Email</label>
+-          <p class="form-control-static">{{ details?.email }}</p>
+-        </div>
+-      </div>
+-
+-    </div>
+-
+-  </div>
+-</div> -->
+\ No newline at end of file
++</div>
+\ No newline at end of file
+diff --git a/client/src/app/profile/profile.component.ts b/client/src/app/profile/profile.component.ts
+index 0b4ae8b..ef65de0 100644
+--- a/client/src/app/profile/profile.component.ts
++++ b/client/src/app/profile/profile.component.ts
+@@ -9,13 +9,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
+ export class ProfileComponent {
+   details: UserDetails;
+   editNow: Boolean = false;
+-  // details = {
+-  //   dob:"",
+-  //   gender:"",
+-  //   education:"",
+-  //   phone:"",
+-  //   email:""
+-  // }
+ 
+   constructor(private auth: AuthenticationService, private router: Router, private http: HttpClient) { }
+   httpOptions = {
+@@ -23,26 +16,13 @@ export class ProfileComponent {
+   };
+   ngOnInit() {
+     this.auth.profile().subscribe(user => {
+-      //Log the user details
+-      console.log(user);
+       this.details = user;
+     }, (err) => {
+-      console.error("dingessss", err);
+     });
+   }
+-  // fields = [];
+-  // values = [];
+ 
+   editProfile() {
+-    console.log("Profile is being edited");
+-    console.log(this.details)
+-    console.log(this.details.dob);
+-    console.log(this.details.gender);
+-    console.log(this.details.education);
+-    console.log(this.details.phone);
+-    console.log(this.details.email);
+     this.http.post('/api/editProfile', JSON.stringify(this.details), this.httpOptions)
+-      .subscribe(res => console.log(res));
+-    // this.router.navigateByUrl('/newCourse');
++      .subscribe();
+   }
+ }
+diff --git a/package-lock.json b/package-lock.json
+index 7c2ca83..a892e38 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -13,7 +13,6 @@
+         "cors": "^2.8.5",
+         "debug": "~2.1.1",
+         "express": "~4.18.2",
+-        "express-fileupload": "^1.4.0",
+         "express-jwt": "7.7.7",
+         "jade": "~1.9.1",
+         "jsonwebtoken": "8.5.1",
+@@ -1735,17 +1734,6 @@
+       "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ=",
+       "dev": true
+     },
+-    "node_modules/busboy": {
+-      "version": "1.6.0",
+-      "resolved": "https://registry.npmjs.org/busboy/-/busboy-1.6.0.tgz",
+-      "integrity": "sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==",
+-      "dependencies": {
+-        "streamsearch": "^1.1.0"
+-      },
+-      "engines": {
+-        "node": ">=10.16.0"
+-      }
+-    },
+     "node_modules/bytes": {
+       "version": "3.1.2",
+       "resolved": "https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz",
+@@ -2717,17 +2705,6 @@
+         "node": ">= 0.10.0"
+       }
+     },
+-    "node_modules/express-fileupload": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/express-fileupload/-/express-fileupload-1.4.0.tgz",
+-      "integrity": "sha512-RjzLCHxkv3umDeZKeFeMg8w7qe0V09w3B7oGZprr/oO2H/ISCgNzuqzn7gV3HRWb37GjRk429CCpSLS2KNTqMQ==",
+-      "dependencies": {
+-        "busboy": "^1.6.0"
+-      },
+-      "engines": {
+-        "node": ">=12.0.0"
+-      }
+-    },
+     "node_modules/express-jwt": {
+       "version": "7.7.7",
+       "resolved": "https://registry.npmjs.org/express-jwt/-/express-jwt-7.7.7.tgz",
+@@ -7699,14 +7676,6 @@
+       "integrity": "sha1-0721mMK9CugrjKx6xQsRB6eZbEg=",
+       "dev": true
+     },
+-    "node_modules/streamsearch": {
+-      "version": "1.1.0",
+-      "resolved": "https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz",
+-      "integrity": "sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==",
+-      "engines": {
+-        "node": ">=10.0.0"
+-      }
+-    },
+     "node_modules/string_decoder": {
+       "version": "1.0.3",
+       "resolved": "https://registry.npmjs.org/string_decoder/-/string_decoder-1.0.3.tgz",
+@@ -9905,14 +9874,6 @@
+         }
+       }
+     },
+-    "busboy": {
+-      "version": "1.6.0",
+-      "resolved": "https://registry.npmjs.org/busboy/-/busboy-1.6.0.tgz",
+-      "integrity": "sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==",
+-      "requires": {
+-        "streamsearch": "^1.1.0"
+-      }
+-    },
+     "bytes": {
+       "version": "3.1.2",
+       "resolved": "https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz",
+@@ -10749,14 +10710,6 @@
+         }
+       }
+     },
+-    "express-fileupload": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/express-fileupload/-/express-fileupload-1.4.0.tgz",
+-      "integrity": "sha512-RjzLCHxkv3umDeZKeFeMg8w7qe0V09w3B7oGZprr/oO2H/ISCgNzuqzn7gV3HRWb37GjRk429CCpSLS2KNTqMQ==",
+-      "requires": {
+-        "busboy": "^1.6.0"
+-      }
+-    },
+     "express-jwt": {
+       "version": "7.7.7",
+       "resolved": "https://registry.npmjs.org/express-jwt/-/express-jwt-7.7.7.tgz",
+@@ -14792,11 +14745,6 @@
+       "integrity": "sha1-0721mMK9CugrjKx6xQsRB6eZbEg=",
+       "dev": true
+     },
+-    "streamsearch": {
+-      "version": "1.1.0",
+-      "resolved": "https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz",
+-      "integrity": "sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg=="
+-    },
+     "string_decoder": {
+       "version": "1.0.3",
+       "resolved": "https://registry.npmjs.org/string_decoder/-/string_decoder-1.0.3.tgz",
+diff --git a/package.json b/package.json
+index 3a52b36..02a736e 100644
+--- a/package.json
++++ b/package.json
+@@ -11,7 +11,6 @@
+     "cors": "^2.8.5",
+     "debug": "~2.1.1",
+     "express": "~4.18.2",
+-    "express-fileupload": "^1.4.0",
+     "express-jwt": "7.7.7",
+     "jade": "~1.9.1",
+     "jsonwebtoken": "8.5.1",
