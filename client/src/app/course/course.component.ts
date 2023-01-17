@@ -48,7 +48,6 @@ export class CourseComponent implements OnInit {
 
   }
   downloadAssignment(assignment, fileType: string) {
-    console.log(fileType)
     const decryptedAssignment = this.decryptAssignment(assignment, fileType);
     const downloadURL = URL.createObjectURL(decryptedAssignment);
     const downloadLink = document.createElement("a");
@@ -61,7 +60,6 @@ export class CourseComponent implements OnInit {
     URL.revokeObjectURL(downloadURL)
   }
   startSession() {
-    console.log("Connecting to live class ");
     var domain = "meet.jit.si";
     var options = {
       roomName: "VirtualClassroom-" + this.course.code,// +"somerandom",
@@ -80,9 +78,7 @@ export class CourseComponent implements OnInit {
   }
   addNew(event) {
     if (event.keyCode == 13) {
-      console.log("Enter pressed.");
       if (this.newSyllabus) {
-        console.log("Adding Syllabus..");
 
         this.http.post('/api/addSyllabus',
           JSON.stringify({
@@ -90,7 +86,6 @@ export class CourseComponent implements OnInit {
             "syllabus": this.newSyllabus
           }), this.httpOptions)
           .subscribe((res: string[]) => {
-            console.log(res);
             this.course.syllabus = res;
           });
       }
@@ -107,12 +102,10 @@ export class CourseComponent implements OnInit {
       this.http.post('/api/handInAssignment', formData)
         .subscribe((res: any) => {
           this.handedInAssignment = res;
-          console.log("assignment list:", res);
         });
     }
   }
   decryptAssignment(assignment, fileType: string): Blob {
-    console.log(assignment)
     let byteChars = atob(assignment.data); //To decrypt data
     let dataArray = new Array(byteChars.length);
     for (let i = 0; i < byteChars.length; i++) {

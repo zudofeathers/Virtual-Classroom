@@ -29,14 +29,11 @@ export class DashboardComponent {
     this.auth.profile().subscribe(user => {
       this.user = user;
       //Log the user details
-      console.log(user.courses);
       //Load MyCourses
       for (var course in user.courses) {
 
-        console.log("Requesting " + user.courses[course]);
         this.http.get('/api/courseDetails/' + user.courses[course], this.httpOptions)
           .subscribe(res => {
-            console.log(res);
             this.courses.push(res);
           });
       }
@@ -53,8 +50,6 @@ export class DashboardComponent {
     }
   }
   newCourse() {
-    console.log("New course is being created", this.newcourse.assignment);
-
     const formData = new FormData();
     formData.append("assignment", this.newcourse.assignment, this.newcourse.assignment.name);
     formData.append("name", this.newcourse.name);
@@ -67,10 +62,8 @@ export class DashboardComponent {
       });
   }
   allCourses() {
-    console.log("Getting All Courses");
     this.http.get('/api/allCourses/', this.httpOptions)
       .subscribe(res => {
-        console.log(res);
         this.list = res;
         this.find = true;
       });

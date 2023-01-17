@@ -15,7 +15,6 @@ module.exports.newCourse = function (req, res) {
       console.log("Error..\n" + err);
       res.status(200);
     } else {
-      console.log("Adding in User collection..");
       User.findOneAndUpdate({
         email: req.body.owner
       }, {
@@ -42,8 +41,6 @@ module.exports.newCourse = function (req, res) {
 
     }
   });
-  console.log(course);
-  console.log("Searching for " + req.body.owner);
   if (course) {
 
   } else {
@@ -52,7 +49,6 @@ module.exports.newCourse = function (req, res) {
 };
 
 module.exports.addAssignment = function (req, res) {
-  console.log("Searching and adding assignment " + req.params.course);
   var code = (req.params.course);
 
   Course.findOneAndUpdate({
@@ -62,7 +58,6 @@ module.exports.addAssignment = function (req, res) {
       console.log(err)
       res.status(404).json(err);
     }
-    console.log("Sending course " + course);
     res.status(200).json(course);
   });
 }
@@ -82,7 +77,6 @@ module.exports.courseDetails = function (req, res) {
 }
 
 module.exports.courseAssignment = function (req, res) {
-  console.log("Searching and sending " + req.params.course);
   var code = (req.params.course);
 
   Course.findOne({
@@ -92,15 +86,12 @@ module.exports.courseAssignment = function (req, res) {
       console.log(err)
       res.status(404).json(err);
     }
-    console.log("Sending course " + course);
-
 
     res.status(200).json(course.assignment);
   });
 }
 
 module.exports.addSyllabus = function (req, res) {
-  console.log("Adding to " + req.body.course);
   var code = (req.body.course);
 
   Course.findOneAndUpdate({
@@ -116,19 +107,16 @@ module.exports.addSyllabus = function (req, res) {
       console.log(err)
       res.status(404).json(err);
     }
-    console.log("Sending course " + data);
     res.status(200).json(data.syllabus);
   });
 }
 
 module.exports.allCourses = function (req, res) {
-  console.log("Sending Courses");
   Course.find({}, function (err, courses) {
     if (err) {
       console.log(err)
       res.status(404).json(err);
     }
-    console.log("Sending course " + courses);
     res.status(200).json(courses);
   });
 }
@@ -156,7 +144,6 @@ module.exports.handInAssignment = function (req, res) {
           console.log("handing in assignment failed" + err);
           res.status(404).json(err);
         }
-        console.log("handing in assignment " + data);
         res.status(200).json(req['files'].assignment);
       }
       )
