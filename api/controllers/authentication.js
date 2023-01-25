@@ -17,7 +17,6 @@ module.exports.register = function (req, res) {
   // }
 
   var user = new User();
-  console.log("Registering " + JSON.stringify(req.body));
   user.name = req.body.name;
   user.email = req.body.email;
   user.faculty = req.body.faculty;
@@ -27,7 +26,6 @@ module.exports.register = function (req, res) {
     if (err) {
       console.log("err", err)
     } else {
-      console.log("result", result)
       var token;
       token = user.generateJwt();
       res.status(200);
@@ -80,7 +78,6 @@ module.exports.forgotPassword = function (req, res) {
    Use User.find to check if user exists
    if yes send else send back error
   */
-  console.log("Searching for " + req.body.email);
   User.findOne({ email: req.body.email }, function (err, user) {
     if (err) { return done(err); }
     // If user is found in database

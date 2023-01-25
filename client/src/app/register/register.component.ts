@@ -13,10 +13,9 @@ export class RegisterComponent {
     faculty: false,
   };
 
-  constructor(private auth: AuthenticationService, private router: Router) {}
+  constructor(private auth: AuthenticationService, private router: Router) { }
 
   register() {
-    console.log(this.credentials);
     this.auth.register(this.credentials).subscribe(() => {
       this.router.navigateByUrl('/profile');
     }, (err) => {

@@ -34,13 +34,6 @@ export class ProfileComponent {
   // values = [];
 
   editProfile() {
-    console.log("Profile is being edited");
-    console.log(this.details)
-    console.log(this.details.dob);
-    console.log(this.details.gender);
-    console.log(this.details.education);
-    console.log(this.details.phone);
-    console.log(this.details.email);
     this.http.post('/api/editProfile', JSON.stringify(this.details), this.httpOptions)
       .subscribe(res => console.log(res));
     // this.router.navigateByUrl('/newCourse');

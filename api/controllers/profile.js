@@ -2,9 +2,6 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
 module.exports.profileRead = function (req, res) {
-  console.log("testing")
-  console.log("req", req.auth)
-  // console.log("res", res)
   if (!req.auth._id) {
     res.status(401).json({
       "message": "UnauthorizedError: private profile"
@@ -12,7 +9,6 @@ module.exports.profileRead = function (req, res) {
   } else {
     User.findById(req.auth._id)
       .exec(function (err, user) {
-        console.log("Sending..\n" + user);
         res.status(200).json(user);
       });
   }
@@ -20,7 +16,6 @@ module.exports.profileRead = function (req, res) {
 };
 
 module.exports.editProfile = function (req, res) {
-  console.log("Editing Profile " + JSON.stringify(req.body));
   var id = req.body._id;
   User.findByIdAndUpdate(id, {
     dob: req.body.dob,
@@ -32,7 +27,6 @@ module.exports.editProfile = function (req, res) {
     if (err)
       console.log(err);
     else {
-      console.log("Updated ..");
       res.status(200).json(user);
     }
   });
