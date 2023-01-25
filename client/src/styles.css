@@ -25,10 +25,10 @@
 } */
 .my-view {
   margin-top: 100px;
-} 
+}
 .navbar-brand {
-  padding:0;
-  margin:0;
+  padding: 0;
+  margin: 0;
 }
 /* .navbar {
   height: 60px;
@@ -36,5 +36,5 @@
 
 .scroll-box {
   overflow-y: scroll;
-  padding: 1rem
+  padding: 1rem;
 }

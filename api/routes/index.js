@@ -1,41 +1,40 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var { expressjwt: jwt } = require('express-jwt');
+var { expressjwt: jwt } = require("express-jwt");
 var auth = jwt({
-  secret: 'MY_SECRET',
-  userProperty: 'payload',
-  algorithms: ['HS256']
+  secret: "MY_SECRET",
+  userProperty: "payload",
+  algorithms: ["HS256"],
 });
 
-var ctrlProfile = require('../controllers/profile');
-var ctrlAuth = require('../controllers/authentication');
-var ctrlCourse = require('../controllers/course');
+var ctrlProfile = require("../controllers/profile");
+var ctrlAuth = require("../controllers/authentication");
+var ctrlCourse = require("../controllers/course");
 // profile
-router.get('/profile', auth, ctrlProfile.profileRead);
+router.get("/profile", auth, ctrlProfile.profileRead);
 
 // courses
 //router.get('/courses', auth, );
 
 // authentication
-router.post('/register', ctrlAuth.register);
-router.post('/login', ctrlAuth.login);
+router.post("/register", ctrlAuth.register);
+router.post("/login", ctrlAuth.login);
 
 //edit profile
-router.post('/editProfile', ctrlProfile.editProfile);
+router.post("/editProfile", ctrlProfile.editProfile);
 
 //new course
-router.post('/newCourse', ctrlCourse.newCourse);
-router.post('/addAssignment/:course', ctrlCourse.addAssignment);
+router.post("/newCourse", ctrlCourse.newCourse);
+router.post("/addAssignment/:course", ctrlCourse.addAssignment);
 
 //retrieve user's courses
-router.get('/courseDetails/:course', ctrlCourse.courseDetails);
-router.get('/courseAssignment/:course', ctrlCourse.courseAssignment);
-router.get('/allCourses', ctrlCourse.allCourses);
-router.post('/addSyllabus', ctrlCourse.addSyllabus);
-router.post('/handInAssignment', ctrlCourse.handInAssignment);
-
+router.get("/courseDetails/:course", ctrlCourse.courseDetails);
+router.get("/courseAssignment/:course", ctrlCourse.courseAssignment);
+router.get("/allCourses", ctrlCourse.allCourses);
+router.post("/addSyllabus", ctrlCourse.addSyllabus);
+router.post("/handInAssignment", ctrlCourse.handInAssignment);
 
 //Forgot Password
-router.post('/forgotPassword', ctrlAuth.forgotPassword);
+router.post("/forgotPassword", ctrlAuth.forgotPassword);
 
 module.exports = router;

@@ -1,37 +1,51 @@
-import { Component } from '@angular/core';
-import { AuthenticationService, TokenPayload, UserDetails } from '../authentication.service';
-import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component } from "@angular/core";
+import {
+  AuthenticationService,
+  TokenPayload,
+  UserDetails,
+} from "../authentication.service";
+import { Router } from "@angular/router";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @Component({
-  templateUrl: './login.component.html'
+  templateUrl: "./login.component.html",
 })
 export class LoginComponent {
   credentials: TokenPayload = {
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   };
   emailForPassword;
 
-  constructor(private auth: AuthenticationService, private router: Router, private http: HttpClient) { }
+  constructor(
+    private auth: AuthenticationService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
   login() {
-    this.auth.login(this.credentials).subscribe(() => {
-      this.router.navigateByUrl('/profile');
-    }, (err) => {
-      console.error(err);
-    });
+    this.auth.login(this.credentials).subscribe(
+      () => {
+        this.router.navigateByUrl("/profile");
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
   }
 
   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    headers: new HttpHeaders({ "Content-Type": "application/json" }),
   };
 
   mailPassword() {
-    this.http.post('/api/forgotPassword',
-      JSON.stringify({ "email": this.emailForPassword }), this.httpOptions)
-      .subscribe(res => console.log(res));
+    this.http
+      .post(
+        "/api/forgotPassword",
+        JSON.stringify({ email: this.emailForPassword }),
+        this.httpOptions
+      )
+      .subscribe((res) => console.log(res));
     // this.router.navigateByUrl('/newCourse');
-
   }
 }

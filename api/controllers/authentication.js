@@ -1,6 +1,6 @@
-var passport = require('passport');
-var mongoose = require('mongoose');
-var User = mongoose.model('User');
+var passport = require("passport");
+var mongoose = require("mongoose");
+var User = mongoose.model("User");
 
 var sendJSONresponse = function (res, status, content) {
   res.status(status);
@@ -8,14 +8,6 @@ var sendJSONresponse = function (res, status, content) {
 };
 
 module.exports.register = function (req, res) {
-
-  // if(!req.body.name || !req.body.email || !req.body.password) {
-  //   sendJSONresponse(res, 400, {
-  //     "message": "All fields required"
-  //   });
-  //   return;
-  // }
-
   var user = new User();
   user.name = req.body.name;
   user.email = req.body.email;
@@ -24,28 +16,20 @@ module.exports.register = function (req, res) {
 
   user.save(function (err, result) {
     if (err) {
-      console.log("err", err)
+      console.log("err", err);
     } else {
       var token;
       token = user.generateJwt();
       res.status(200);
       res.json({
-        "token": token
+        token: token,
       });
     }
   });
 };
 
 module.exports.login = function (req, res) {
-
-  // if(!req.body.email || !req.body.password) {
-  //   sendJSONresponse(res, 400, {
-  //     "message": "All fields required"
-  //   });
-  //   return;
-  // }
-
-  passport.authenticate('local', function (err, user, info) {
+  passport.authenticate("local", function (err, user, info) {
     var token;
 
     // If Passport throws/catches an error
@@ -59,37 +43,34 @@ module.exports.login = function (req, res) {
       token = user.generateJwt();
       res.status(200);
       res.json({
-        "token": token
+        token: token,
       });
-      console.log("Logged in");
     } else {
       // If user is not found
       res.status(401).json(info);
     }
   })(req, res);
-
 };
 
-
 module.exports.forgotPassword = function (req, res) {
-
   /* TODO :
    Retreive Email id
    Use User.find to check if user exists
    if yes send else send back error
   */
   User.findOne({ email: req.body.email }, function (err, user) {
-    if (err) { return done(err); }
+    if (err) {
+      return done(err);
+    }
     // If user is found in database
     if (user) {
       res.status(200);
       res.json({
-        "email": req.body.email
+        email: req.body.email,
       });
     } else {
       // If user is not found
       res.status(401).json(info);
     }
   })(req, res);
-
 };
