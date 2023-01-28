@@ -7,7 +7,6 @@ module.exports.newCourse = function (req, res) {
   course.name = req.body.name;
   course.code = req.body.code;
   course.owner = req.body.owner;
-  course.users = [req.body.owner]; //owner also a user, add to user table also ...
   course.assignment = req["files"].assignment;
 
   course.save(function (err) {
@@ -17,7 +16,7 @@ module.exports.newCourse = function (req, res) {
     } else {
       User.findOneAndUpdate(
         {
-          email: req.body.owner,
+          _id: req.body.owner,
         },
         {
           $push: {
@@ -30,8 +29,6 @@ module.exports.newCourse = function (req, res) {
           }
           // If user is found in database, add course code to user
           if (user) {
-            // user.courses.push(req.body);
-
             res.status(200);
             res.json({
               code: req.body.code,
@@ -50,56 +47,34 @@ module.exports.newCourse = function (req, res) {
   }
 };
 
-module.exports.addAssignment = function (req, res) {
+module.exports.courseDetails = (req, res) => {
   var code = req.params.course;
 
-  Course.findOneAndUpdate(
-    {
-      code: code,
-    },
-    function (err, course) {
+  Course.findOne({
+    code: code,
+  })
+    .lean()
+    .exec((err, course) => {
       if (err) {
         console.log(err);
         res.status(404).json(err);
       }
-      res.status(200).json(course);
-    }
-  );
-};
-
-module.exports.courseDetails = function (req, res) {
-  var code = req.params.course;
-
-  Course.findOne(
-    {
-      code: code,
-    },
-    function (err, course) {
-      if (err) {
-        console.log(err);
-        res.status(404).json(err);
-      }
-      res.status(200).json(course);
-    }
-  );
-};
-
-module.exports.courseAssignment = function (req, res) {
-  var code = req.params.course;
-
-  Course.findOne(
-    {
-      code: code,
-    },
-    function (err, course) {
-      if (err) {
-        console.log(err);
-        res.status(404).json(err);
-      }
-
-      res.status(200).json(course.assignment);
-    }
-  );
+      User.find()
+        .where("_id")
+        .in(course.attendees.map((attendee) => attendee.user))
+        .exec((err, users) => {
+          if (err) {
+            console.log(err);
+            res.status(404).json(err);
+          }
+          users.forEach((user) => {
+            course.attendees.find((attendee) =>
+              attendee.user.equals(user._id)
+            ).user = user.email;
+          });
+          res.status(200).json(course);
+        });
+    });
 };
 
 module.exports.addSyllabus = function (req, res) {
@@ -138,10 +113,10 @@ module.exports.allCourses = function (req, res) {
 };
 
 module.exports.handInAssignment = function (req, res) {
-  const { email, courseCode } = req.body;
+  const { id, courseCode } = req.body;
   Course.findOneAndUpdate(
     { code: courseCode },
-    { $pull: { assignmentAnswers: { user: email } } },
+    { $pull: { attendees: { user: id } } },
     { new: true },
     function () {
       Course.findOneAndUpdate(
@@ -150,9 +125,9 @@ module.exports.handInAssignment = function (req, res) {
         },
         {
           $push: {
-            assignmentAnswers: {
-              user: email,
-              assignment: req["files"].assignment,
+            attendees: {
+              user: id,
+              submittedAssignment: req["files"].assignment,
             },
           },
         },

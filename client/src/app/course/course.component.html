@@ -116,11 +116,13 @@
 
               <div class="card p-2" *ngIf="this.user.faculty">
                 <h4>Submitted student assignments:</h4>
-                <div *ngFor="let assignment of course.assignmentAnswers">
-                  <label for="assignment.user">{{ assignment.user }}:</label>
+                <div *ngFor="let attendee of course.attendees">
+                  <label for="attendee.user">{{ attendee.user }}:</label>
                   <a
                     ><button
-                      (click)="downloadAssignment(assignment.assignment, 'zip')"
+                      (click)="
+                        downloadAssignment(attendee.submittedAssignment, 'zip')
+                      "
                       class="btn btn-primary m-4"
                       type="submit"
                     >

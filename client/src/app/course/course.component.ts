@@ -3,7 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { AuthenticationService, UserDetails } from "../authentication.service";
 import { Router } from "@angular/router";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Course } from "../modles/course";
+import { Course } from "../models/course";
 
 //let jitsi = require('https://meet.jit.si/external_api.js');
 declare function JitsiMeetExternalAPI(a, b): void;
@@ -20,7 +20,7 @@ export class CourseComponent implements OnInit {
     name: "",
     code: "",
     owner: "",
-    users: [],
+    attendees: [],
     assignment: null,
   };
   handedInAssignment = null;
@@ -41,16 +41,9 @@ export class CourseComponent implements OnInit {
         .subscribe((res: any) => {
           this.course = res;
           if (!this.user.faculty) {
-            this.handedInAssignment = res.assignmentAnswers.find(
-              (assignment) => assignment.user === this.user.email
-            ).assignment;
-          } else {
-            this.course.assignmentAnswers = res.assignmentAnswers.map(
-              (assignmentAnswer) => ({
-                user: assignmentAnswer.user,
-                assignment: assignmentAnswer.assignment,
-              })
-            );
+            this.handedInAssignment = res.attendees.find(
+              (attendee) => attendee.user === this.user._id
+            ).submittedAssignment;
           }
         });
     });
@@ -116,7 +109,7 @@ export class CourseComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file) {
       formData.append("courseCode", this.course.code);
-      formData.append("email", this.user.email);
+      formData.append("id", this.user._id);
       formData.append("assignment", file, file.name);
       this.http
         .post("/api/handInAssignment", formData)

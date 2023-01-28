@@ -10,41 +10,38 @@ var courseSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  //owner:mongoose.Schema.Types.ObjectId,
   owner: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
-  users: {
-    //type: [mongoose.Schema.Types.ObjectId],
+  attendees: {
+    type: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+        },
+        submittedAssignment: {
+          type: mongoose.Schema.Types.Mixed,
+        },
+        grade: {
+          type: String,
+        },
+      },
+    ],
+    default: [],
+  },
+  syllabus: {
     type: [String],
     default: [],
   },
-  forums: [
-    {
-      sender: mongoose.Schema.Types.ObjectId,
-      msg: String,
-    },
-  ],
-  syllabus: {
+  resources: {
     type: [String],
-    // required: true
+    default: [],
   },
   assignment: {
     type: mongoose.Schema.Types.Mixed,
   },
-  assignmentAnswers: [
-    {
-      user: {
-        type: String,
-        required: true,
-      },
-      assignment: {
-        type: mongoose.Schema.Types.Mixed,
-        required: true,
-      },
-    },
-  ],
 });
 
 mongoose.model("Course", courseSchema, "courses");

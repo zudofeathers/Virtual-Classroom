@@ -41,7 +41,7 @@ export class DashboardComponent {
               this.courses.push(res);
             });
         }
-        this.newcourse.owner = user.email;
+        this.newcourse.owner = user._id;
       },
       (err) => {
         console.error(err);
