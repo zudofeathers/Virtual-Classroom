@@ -33,8 +33,8 @@ gracefulShutdown = function (msg, callback) {
   });
 });*/
 // For app termination
-process.on("SIGINT", function () {
-  gracefulShutdown("app termination", function () {
+process.on("SIGINT", () => {
+  gracefulShutdown("app termination", () => {
     process.exit(0);
   });
 });

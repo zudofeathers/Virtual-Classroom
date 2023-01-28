@@ -2,19 +2,19 @@ var passport = require("passport");
 var mongoose = require("mongoose");
 var User = mongoose.model("User");
 
-var sendJSONresponse = function (res, status, content) {
+var sendJSONresponse = (res, status, content) => {
   res.status(status);
   res.json(content);
 };
 
-module.exports.register = function (req, res) {
+module.exports.register = (req, res) => {
   var user = new User();
   user.name = req.body.name;
   user.email = req.body.email;
   user.faculty = req.body.faculty;
   user.setPassword(req.body.password);
 
-  user.save(function (err, result) {
+  user.save((err, result) => {
     if (err) {
       console.log("err", err);
     } else {
@@ -28,8 +28,8 @@ module.exports.register = function (req, res) {
   });
 };
 
-module.exports.login = function (req, res) {
-  passport.authenticate("local", function (err, user, info) {
+module.exports.login = (req, res) => {
+  passport.authenticate("local", (err, user, info) => {
     var token;
 
     // If Passport throws/catches an error
@@ -52,13 +52,13 @@ module.exports.login = function (req, res) {
   })(req, res);
 };
 
-module.exports.forgotPassword = function (req, res) {
+module.exports.forgotPassword = (req, res) => {
   /* TODO :
    Retreive Email id
    Use User.find to check if user exists
    if yes send else send back error
   */
-  User.findOne({ email: req.body.email }, function (err, user) {
+  User.findOne({ email: req.body.email }, (err, user) => {
     if (err) {
       return done(err);
     }

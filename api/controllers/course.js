@@ -2,14 +2,14 @@ var mongoose = require("mongoose");
 var Course = mongoose.model("Course");
 var User = mongoose.model("User");
 
-module.exports.newCourse = function (req, res) {
+module.exports.newCourse = (req, res) => {
   var course = new Course();
   course.name = req.body.name;
   course.code = req.body.code;
   course.owner = req.body.owner;
   course.assignment = req["files"].assignment;
 
-  course.save(function (err) {
+  course.save((err) => {
     if (err) {
       console.log("Error..\n" + err);
       res.status(200);
@@ -23,7 +23,7 @@ module.exports.newCourse = function (req, res) {
             courses: req.body.code,
           },
         },
-        function (err, user) {
+        (err, user) => {
           if (err) {
             return done(err);
           }
@@ -77,7 +77,7 @@ module.exports.courseDetails = (req, res) => {
     });
 };
 
-module.exports.addSyllabus = function (req, res) {
+module.exports.addSyllabus = (req, res) => {
   var code = req.body.course;
 
   Course.findOneAndUpdate(
@@ -92,7 +92,7 @@ module.exports.addSyllabus = function (req, res) {
     {
       new: true,
     },
-    function (err, data) {
+    (err, data) => {
       if (err) {
         console.log(err);
         res.status(404).json(err);
@@ -102,8 +102,8 @@ module.exports.addSyllabus = function (req, res) {
   );
 };
 
-module.exports.allCourses = function (req, res) {
-  Course.find({}, function (err, courses) {
+module.exports.allCourses = (req, res) => {
+  Course.find({}, (err, courses) => {
     if (err) {
       console.log(err);
       res.status(404).json(err);
@@ -112,13 +112,13 @@ module.exports.allCourses = function (req, res) {
   });
 };
 
-module.exports.handInAssignment = function (req, res) {
+module.exports.handInAssignment = (req, res) => {
   const { id, courseCode } = req.body;
   Course.findOneAndUpdate(
     { code: courseCode },
     { $pull: { attendees: { user: id } } },
     { new: true },
-    function () {
+    () => {
       Course.findOneAndUpdate(
         {
           code: courseCode,
@@ -134,7 +134,7 @@ module.exports.handInAssignment = function (req, res) {
         {
           new: true,
         },
-        function (err, data) {
+        (err, data) => {
           if (err) {
             console.log("handing in assignment failed" + err);
             res.status(404).json(err);
