@@ -42,8 +42,6 @@
           <div id="meet" class=""></div>
         </div>
 
-        <div class="container-fluid mt-5"></div>
-
         <div class="container-fluid mt-5">
           <!-- Heading -->
           <div class="card mb-4 wow fadeIn">
@@ -53,7 +51,8 @@
             </div>
           </div>
 
-          <div class="container row">
+          <div class="justify-content-center row mr-1 ml-1">
+            <!-- Left -->
             <div class="col-md-6 mb-4">
               <div class="card">
                 <div>
@@ -90,7 +89,7 @@
                 </button>
               </div>
 
-              <div class="card p-2" *ngIf="!this.user.faculty">
+              <div class="card p-4" *ngIf="!this.user.faculty">
                 <div>
                   <label for="profile_pic"
                     ><b>Upload your assignment here</b></label
@@ -114,7 +113,7 @@
                 </div>
               </div>
 
-              <div class="card p-2" *ngIf="this.user.faculty">
+              <div class="card p-4" *ngIf="this.user.faculty">
                 <h4>Submitted student assignments:</h4>
                 <div *ngFor="let attendee of course.attendees">
                   <label for="attendee.user">{{ attendee.user }}:</label>

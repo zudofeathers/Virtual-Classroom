@@ -33,7 +33,7 @@ export class ProfileComponent {
         this.details = user;
       },
       (err) => {
-        console.error("dingessss", err);
+        console.error(err);
       }
     );
   }
