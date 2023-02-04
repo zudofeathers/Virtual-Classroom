@@ -161,7 +161,7 @@
                   <label class="attendees-name">Email:</label>
                   <div class="attendees-right-side">
                     <label
-                      *ngIf="this.user.faculty"
+                      *ngIf="this.user && this.user.faculty"
                       class="attendees-header-assignment"
                       >Submitted Assignment:</label
                     >
@@ -169,14 +169,16 @@
                   </div>
                 </div>
                 <div
-                  class="attendees-container"
+                  class="mb-2 attendees-container"
                   *ngFor="let attendee of course.attendees"
                 >
                   <label class="attendees-name" for="attendee.user">{{
                     attendee.user
                   }}</label>
                   <div class="attendees-right-side">
-                    <a *ngIf="this.user.faculty" class="mr-2"
+                    <a
+                      *ngIf="this.user.faculty && attendee.submittedAssignment"
+                      class="mr-2"
                       ><button
                         (click)="
                           downloadAssignment(

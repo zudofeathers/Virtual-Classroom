@@ -35,23 +35,23 @@ export class CourseComponent implements OnInit {
     private auth: AuthenticationService,
     private router: Router,
     private http: HttpClient
-  ) {
-    this.route.params.subscribe((params) => {
-      this.http
-        .get("/api/courseDetails/" + params.courseCode, this.httpOptions)
-        .subscribe((res: any) => {
-          this.course = res;
-          if (!this.user.faculty) {
-            this.handedInAssignment = res.attendees.find(
-              (attendee) => attendee.user === this.user._id
-            ).submittedAssignment;
-          }
-        });
-    });
-  }
+  ) {}
   ngOnInit() {
     this.auth.profile().subscribe(
       (user) => {
+        this.route.params.subscribe((params) => {
+          this.http
+            .get("/api/courseDetails/" + params.courseCode, this.httpOptions)
+            .subscribe((res: any) => {
+              this.course = res;
+              if (!user.faculty) {
+                console.log("res", res.attendees);
+                // this.handedInAssignment =
+                //   res.attendees.find((attendee) => attendee.user === user._id)
+                //     .submittedAssignment;
+              }
+            });
+        });
         this.user = user;
       },
       (err) => {

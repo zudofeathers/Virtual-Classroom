@@ -55,6 +55,7 @@ module.exports.courseDetails = (req, res) => {
   })
     .lean()
     .exec((err, course) => {
+      // console.log("course", course);
       if (err) {
         console.log(err);
         res.status(404).json(err);
@@ -69,7 +70,7 @@ module.exports.courseDetails = (req, res) => {
           }
           users.forEach((user) => {
             course.attendees.find((attendee) =>
-              attendee.user.equals(user._id)
+              user._id.equals(attendee.user)
             ).user = user.email;
           });
           res.status(200).json(course);
