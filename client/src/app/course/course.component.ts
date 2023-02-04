@@ -3,7 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { AuthenticationService, UserDetails } from "../authentication.service";
 import { Router } from "@angular/router";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Course } from "../models/course";
+import { Course, CourseDropdown } from "../models/course";
 
 //let jitsi = require('https://meet.jit.si/external_api.js');
 declare function JitsiMeetExternalAPI(a, b): void;
@@ -29,6 +29,7 @@ export class CourseComponent implements OnInit {
   httpOptions = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
   };
+  coursedropdown = CourseDropdown.ATTENDEES;
   constructor(
     private route: ActivatedRoute,
     private auth: AuthenticationService,
@@ -57,6 +58,12 @@ export class CourseComponent implements OnInit {
         console.error(err);
       }
     );
+  }
+  handleCourseDropdown(clicked: CourseDropdown) {
+    this.coursedropdown = clicked;
+  }
+  public get courseDropdownEnum(): typeof CourseDropdown {
+    return CourseDropdown;
   }
   downloadAssignment(assignment, fileType: string) {
     const decryptedAssignment = this.decryptAssignment(assignment, fileType);

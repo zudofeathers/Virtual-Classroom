@@ -12,3 +12,8 @@ export type AssignmentAnswer = {
   assignment?: File;
   grade?: string;
 };
+
+export enum CourseDropdown {
+  ATTENDEES = "Attendees",
+  RECOURCES = "Recources",
+}
