@@ -162,8 +162,12 @@
                     {{ course.code }} - {{ course.name }}
                   </h4>
                   <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                  <button type="button" class="btn btn-blue btn-md">
-                    Go to Course Page
+                  <button
+                    type="button"
+                    class="btn btn-blue btn-md"
+                    (onclick)="joinCourse(course.code)"
+                  >
+                    Join Course
                   </button>
                 </div>
                 <!--Card content-->
@@ -188,8 +192,12 @@
                     {{ course.code }} - {{ course.name }}
                   </h4>
                   <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                  <button type="button" class="btn btn-blue btn-md">
-                    Go to Course Page
+                  <button
+                    type="button"
+                    class="btn btn-blue btn-md"
+                    (onclick)="joinCourse(course.code)"
+                  >
+                    Join Course
                   </button>
                 </div>
                 <!--Card content-->

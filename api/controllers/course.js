@@ -102,6 +102,26 @@ module.exports.addSyllabus = (req, res) => {
   );
 };
 
+module.exports.joinCourse = (req, res) => {
+  var { courseCode, userId } = req.body;
+
+  var conditions = {
+    code: courseCode,
+    "attendees.user": { $ne: userId },
+  };
+
+  var update = {
+    $addToSet: { attendees: { user: userId } },
+  };
+  Course.findOneAndUpdate(conditions, update, function (err, doc) {
+    if (err) {
+      console.log("joining course failed" + err);
+      res.status(404).json(err);
+    }
+    res.status(200).json(courseCode);
+  });
+};
+
 module.exports.allCourses = (req, res) => {
   Course.find({}, (err, courses) => {
     if (err) {

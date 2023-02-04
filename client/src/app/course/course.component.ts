@@ -92,7 +92,6 @@ export class CourseComponent implements OnInit {
     this.api.dispose();
     this.sessionStatus = false;
   }
-  sendMessage() {}
   addNew(event) {
     if (event.keyCode == 13) {
       if (this.newSyllabus) {

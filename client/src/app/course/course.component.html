@@ -157,20 +157,61 @@
             >
               <div class="card p-4">
                 <h4>Attendees:</h4>
-                <div *ngFor="let attendee of course.attendees">
-                  <label for="attendee.user">{{ attendee.user }}:</label>
-                  <a
-                    ><button
+                <div class="attendees-container-header mb-4">
+                  <label class="attendees-name">Email:</label>
+                  <div class="attendees-right-side">
+                    <label
                       *ngIf="this.user.faculty"
-                      (click)="
-                        downloadAssignment(attendee.submittedAssignment, 'zip')
-                      "
-                      class="btn btn-primary m-4"
-                      type="submit"
+                      class="attendees-header-assignment"
+                      >Submitted Assignment:</label
                     >
-                      <i class="fa fa-download mr-3"></i>Download answer
-                    </button></a
-                  >
+                    <label class="mr-2">Grade:</label>
+                  </div>
+                </div>
+                <div
+                  class="attendees-container"
+                  *ngFor="let attendee of course.attendees"
+                >
+                  <label class="attendees-name" for="attendee.user">{{
+                    attendee.user
+                  }}</label>
+                  <div class="attendees-right-side">
+                    <a *ngIf="this.user.faculty" class="mr-2"
+                      ><button
+                        (click)="
+                          downloadAssignment(
+                            attendee.submittedAssignment,
+                            'zip'
+                          )
+                        "
+                        class="btn btn-primary"
+                        type="submit"
+                      >
+                        <i class="fa fa-download mr-3"></i>Download answer
+                      </button></a
+                    >
+                    <div class="attendees-right-grade form-group">
+                      <span class="mr-2" *ngIf="!this.user.faculty">{{
+                        attendee.grade || "NAN"
+                      }}</span>
+                      <select
+                        *ngIf="this.user.faculty"
+                        class="form-control"
+                        id="exampleFormControlSelect1"
+                      >
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

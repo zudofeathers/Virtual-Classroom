@@ -30,6 +30,7 @@ router.post("/newCourse", ctrlCourse.newCourse);
 router.get("/courseDetails/:course", ctrlCourse.courseDetails);
 router.get("/allCourses", ctrlCourse.allCourses);
 router.post("/addSyllabus", ctrlCourse.addSyllabus);
+router.post("/joinCourse", ctrlCourse.joinCourse);
 router.post("/handInAssignment", ctrlCourse.handInAssignment);
 
 //Forgot Password

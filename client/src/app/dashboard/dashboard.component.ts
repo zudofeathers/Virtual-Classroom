@@ -77,4 +77,18 @@ export class DashboardComponent {
       this.find = true;
     });
   }
+  joinCourse(courseCode: string) {
+    if (!this.user.faculty) {
+      this.http
+        .post(
+          "/api/joinCourse/",
+          JSON.stringify({
+            courseCode,
+            userId: this.user._id,
+          }),
+          this.httpOptions
+        )
+        .subscribe((res) => {});
+    }
+  }
 }
