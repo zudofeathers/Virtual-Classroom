@@ -166,7 +166,6 @@ export class CourseComponent implements OnInit {
     } else {
       this.resourceInput = event.target.value;
     }
-    console.log(this.resourceInput);
   }
   onAddResource() {
     const formData = new FormData();

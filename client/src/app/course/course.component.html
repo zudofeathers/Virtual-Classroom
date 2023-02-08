@@ -94,6 +94,7 @@
                   <div class="resources-header mb-2">
                     <h4 style="margin-bottom: 0px">Resources</h4>
                     <button
+                      *ngIf="this.user && this.user.faculty"
                       type="button"
                       class="btn-primary"
                       data-toggle="modal"
