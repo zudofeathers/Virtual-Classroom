@@ -32,6 +32,8 @@ router.get("/allCourses", ctrlCourse.allCourses);
 router.post("/addSyllabus", ctrlCourse.addSyllabus);
 router.post("/joinCourse", ctrlCourse.joinCourse);
 router.post("/handInAssignment", ctrlCourse.handInAssignment);
+router.post("/updateAssignmentGrade", ctrlCourse.updateAssignmentGrade);
+router.post("/addResource", ctrlCourse.addResource);
 
 //Forgot Password
 router.post("/forgotPassword", ctrlAuth.forgotPassword);

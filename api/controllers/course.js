@@ -78,6 +78,16 @@ module.exports.courseDetails = (req, res) => {
     });
 };
 
+module.exports.allCourses = (req, res) => {
+  Course.find({}, (err, courses) => {
+    if (err) {
+      console.log(err);
+      res.status(404).json(err);
+    }
+    res.status(200).json(courses);
+  });
+};
+
 module.exports.addSyllabus = (req, res) => {
   var code = req.body.course;
 
@@ -123,46 +133,72 @@ module.exports.joinCourse = (req, res) => {
   });
 };
 
-module.exports.allCourses = (req, res) => {
-  Course.find({}, (err, courses) => {
+module.exports.handInAssignment = (req, res) => {
+  var { courseCode, userId } = req.body;
+
+  var conditions = {
+    code: courseCode,
+    "attendees.user": userId,
+  };
+
+  var update = {
+    $set: {
+      "attendees.$.submittedAssignment": req["files"].assignment,
+    },
+  };
+  Course.findOneAndUpdate(conditions, update, function (err, doc) {
     if (err) {
-      console.log(err);
+      console.log("Sumbimtting assignment failed" + err);
       res.status(404).json(err);
     }
-    res.status(200).json(courses);
+    res.status(200).json(doc);
   });
 };
 
-module.exports.handInAssignment = (req, res) => {
-  const { id, courseCode } = req.body;
+module.exports.updateAssignmentGrade = (req, res) => {
+  var { courseCode, attendeeId, grade } = req.body;
+
+  var conditions = {
+    code: courseCode,
+    "attendees._id": attendeeId,
+  };
+
+  var update = {
+    $set: {
+      "attendees.$.grade": grade,
+    },
+  };
+  Course.findOneAndUpdate(conditions, update, function (err, doc) {
+    if (err) {
+      console.log("Giving this assingment aa grade failed" + err);
+      res.status(404).json(err);
+    }
+    res.status(200).json(doc);
+  });
+};
+
+module.exports.addResource = (req, res) => {
+  var { courseCode, resource } = req.body;
+
+  var conditions = {
+    code: courseCode,
+  };
+
+  var update = {
+    $push: {
+      resources: req["files"] ? req["files"].resource : resource,
+    },
+  };
   Course.findOneAndUpdate(
-    { code: courseCode },
-    { $pull: { attendees: { user: id } } },
+    conditions,
+    update,
     { new: true },
-    () => {
-      Course.findOneAndUpdate(
-        {
-          code: courseCode,
-        },
-        {
-          $push: {
-            attendees: {
-              user: id,
-              submittedAssignment: req["files"].assignment,
-            },
-          },
-        },
-        {
-          new: true,
-        },
-        (err, data) => {
-          if (err) {
-            console.log("handing in assignment failed" + err);
-            res.status(404).json(err);
-          }
-          res.status(200).json(req["files"].assignment);
-        }
-      );
+    function (err, doc) {
+      if (err) {
+        console.log("Giving this assingment aa grade failed" + err);
+        res.status(404).json(err);
+      }
+      res.status(200).json(doc.resources);
     }
   );
 };

@@ -3,7 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { AuthenticationService, UserDetails } from "../authentication.service";
 import { Router } from "@angular/router";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Course, CourseDropdown } from "../models/course";
+import { Course, CourseDropdown, ResourceType } from "../models/course";
 
 //let jitsi = require('https://meet.jit.si/external_api.js');
 declare function JitsiMeetExternalAPI(a, b): void;
@@ -15,6 +15,8 @@ declare function JitsiMeetExternalAPI(a, b): void;
 })
 export class CourseComponent implements OnInit {
   user: UserDetails;
+  resourceInput: File | string;
+  resourceTypeDropdown: ResourceType = ResourceType.FILE;
   api;
   course: Course = {
     name: "",
@@ -22,6 +24,7 @@ export class CourseComponent implements OnInit {
     owner: "",
     attendees: [],
     assignment: null,
+    resources: [],
   };
   handedInAssignment = null;
   sessionStatus: boolean = false;
@@ -29,7 +32,7 @@ export class CourseComponent implements OnInit {
   httpOptions = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
   };
-  coursedropdown = CourseDropdown.ATTENDEES;
+  coursedropdown: CourseDropdown = CourseDropdown.RESOURCES;
   constructor(
     private route: ActivatedRoute,
     private auth: AuthenticationService,
@@ -45,10 +48,9 @@ export class CourseComponent implements OnInit {
             .subscribe((res: any) => {
               this.course = res;
               if (!user.faculty) {
-                console.log("res", res.attendees);
-                // this.handedInAssignment =
-                //   res.attendees.find((attendee) => attendee.user === user._id)
-                //     .submittedAssignment;
+                this.handedInAssignment = res.attendees.find(
+                  (attendee) => attendee.user === user.email
+                ).submittedAssignment;
               }
             });
         });
@@ -115,7 +117,7 @@ export class CourseComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file) {
       formData.append("courseCode", this.course.code);
-      formData.append("id", this.user._id);
+      formData.append("userId", this.user._id);
       formData.append("assignment", file, file.name);
       this.http
         .post("/api/handInAssignment", formData)
@@ -123,6 +125,18 @@ export class CourseComponent implements OnInit {
           this.handedInAssignment = res;
         });
     }
+  }
+  onGradeAssignment(event, attendeeId) {
+    const formData = new FormData();
+
+    formData.append("attendeeId", attendeeId);
+    formData.append("courseCode", this.course.code);
+    formData.append("grade", event.target.value);
+    this.http
+      .post("/api/updateAssignmentGrade", formData)
+      .subscribe((res: any) => {
+        this.handedInAssignment = res;
+      });
   }
   decryptAssignment(assignment, fileType: string): Blob {
     let byteChars = atob(assignment.data); //To decrypt data
@@ -133,5 +147,45 @@ export class CourseComponent implements OnInit {
     let byteArray = new Uint8Array(dataArray);
     const pdf = new Blob([byteArray], { type: `application/${fileType}` });
     return pdf;
+  }
+  public get resourceTypeEnum(): typeof ResourceType {
+    return ResourceType;
+  }
+  typeOfResource(resource: File | string): boolean {
+    return typeof resource === "string";
+  }
+  onChangeResourceType(event) {
+    this.resourceTypeDropdown = event.target.value;
+  }
+  onChangeResourceInput(event) {
+    if (this.resourceTypeDropdown === ResourceType.FILE) {
+      const file: File = event.target.files[0];
+      if (file) {
+        this.resourceInput = file;
+      }
+    } else {
+      this.resourceInput = event.target.value;
+    }
+    console.log(this.resourceInput);
+  }
+  onAddResource() {
+    const formData = new FormData();
+    formData.append("courseCode", this.course.code);
+
+    if (this.resourceTypeDropdown === ResourceType.FILE) {
+      formData.append(
+        "resource",
+        this.resourceInput,
+        (this.resourceInput as File).name
+      );
+    } else {
+      formData.append("resource", this.resourceInput);
+    }
+
+    this.http
+      .post("/api/addResource", formData)
+      .subscribe((res: (File | string)[]) => {
+        this.course.resources = res;
+      });
   }
 }

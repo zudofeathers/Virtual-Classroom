@@ -36,7 +36,7 @@ var courseSchema = new mongoose.Schema({
     default: [],
   },
   resources: {
-    type: [String],
+    type: [mongoose.Schema.Types.Mixed | String],
     default: [],
   },
   assignment: {

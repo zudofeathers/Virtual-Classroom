@@ -2,9 +2,10 @@ export type Course = {
   name: string;
   code: string;
   owner: string;
-  assignment: Object;
+  assignment: File;
   attendees?: AssignmentAnswer[];
   syllabus?: string[];
+  resources: (File | string)[];
 };
 
 export type AssignmentAnswer = {
@@ -15,5 +16,10 @@ export type AssignmentAnswer = {
 
 export enum CourseDropdown {
   ATTENDEES = "Attendees",
-  RECOURCES = "Recources",
+  RESOURCES = "Resources",
+}
+
+export enum ResourceType {
+  FILE = "File",
+  LINK = "Link",
 }
