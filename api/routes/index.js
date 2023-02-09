@@ -25,14 +25,15 @@ router.post("/editProfile", ctrlProfile.editProfile);
 
 //new course
 router.post("/newCourse", ctrlCourse.newCourse);
-router.post("/addAssignment/:course", ctrlCourse.addAssignment);
 
 //retrieve user's courses
 router.get("/courseDetails/:course", ctrlCourse.courseDetails);
-router.get("/courseAssignment/:course", ctrlCourse.courseAssignment);
 router.get("/allCourses", ctrlCourse.allCourses);
 router.post("/addSyllabus", ctrlCourse.addSyllabus);
+router.post("/joinCourse", ctrlCourse.joinCourse);
 router.post("/handInAssignment", ctrlCourse.handInAssignment);
+router.post("/updateAssignmentGrade", ctrlCourse.updateAssignmentGrade);
+router.post("/addResource", ctrlCourse.addResource);
 
 //Forgot Password
 router.post("/forgotPassword", ctrlAuth.forgotPassword);

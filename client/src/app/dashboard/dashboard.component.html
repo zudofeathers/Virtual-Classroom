@@ -116,7 +116,11 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button class="btn btn-unique" (click)="newCourse()">
+                  <button
+                    class="btn btn-unique"
+                    (click)="newCourse()"
+                    data-dismiss="modal"
+                  >
                     Add course
                     <i class="fa fa-paper-plane-o ml-1"></i>
                   </button>
@@ -158,8 +162,12 @@
                     {{ course.code }} - {{ course.name }}
                   </h4>
                   <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                  <button type="button" class="btn btn-blue btn-md">
-                    Go to Course Page
+                  <button
+                    type="button"
+                    class="btn btn-blue btn-md"
+                    (click)="joinCourse(course.code)"
+                  >
+                    Join Course
                   </button>
                 </div>
                 <!--Card content-->
@@ -184,8 +192,12 @@
                     {{ course.code }} - {{ course.name }}
                   </h4>
                   <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                  <button type="button" class="btn btn-blue btn-md">
-                    Go to Course Page
+                  <button
+                    type="button"
+                    class="btn btn-blue btn-md"
+                    (click)="joinCourse(course.code)"
+                  >
+                    Join Course
                   </button>
                 </div>
                 <!--Card content-->

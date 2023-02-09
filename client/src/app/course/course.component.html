@@ -42,19 +42,162 @@
           <div id="meet" class=""></div>
         </div>
 
-        <div class="container-fluid mt-5"></div>
-
         <div class="container-fluid mt-5">
           <!-- Heading -->
           <div class="card mb-4 wow fadeIn">
             <!--Card content-->
             <div class="card-body d-sm-flex justify-content-between">
               <h4 class="mb-2 mb-sm-0 pt-1">Course Materials</h4>
+              <div class="dropdown">
+                <button
+                  class="btn btn-secondary dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="true"
+                >
+                  {{ coursedropdown }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      (click)="
+                        handleCourseDropdown(courseDropdownEnum.ATTENDEES)
+                      "
+                      >Attendees</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      (click)="
+                        handleCourseDropdown(courseDropdownEnum.RESOURCES)
+                      "
+                      >Resources</a
+                    >
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          <div class="container row">
-            <div class="col-md-6 mb-4">
+          <div class="justify-content-center row mr-1 ml-1">
+            <!-- Left -->
+            <div
+              *ngIf="this.coursedropdown === courseDropdownEnum.RESOURCES"
+              class="col-md-6 mb-4"
+            >
+              <div class="card mb-4 p-2">
+                <div>
+                  <!-- Resource header -->
+                  <div class="resources-header mb-2">
+                    <h4 style="margin-bottom: 0px">Resources</h4>
+                    <button
+                      *ngIf="this.user && this.user.faculty"
+                      type="button"
+                      class="btn-primary"
+                      data-toggle="modal"
+                      data-target="#exampleModal"
+                    >
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </div>
+                  <!-- Resource Modal -->
+                  <div
+                    class="modal fade"
+                    id="exampleModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">
+                            Add Resource
+                          </h5>
+                          <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                          >
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form>
+                          <div class="modal-body">
+                            <div class="form-group">
+                              <label for="resourceSelection"
+                                >Resource type</label
+                              >
+                              <select
+                                (change)="onChangeResourceType($event)"
+                                class="form-control"
+                              >
+                                <option>{{ resourceTypeEnum.FILE }}</option>
+                                <option>{{ resourceTypeEnum.LINK }}</option>
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label for="resourceInput">Resource Input</label>
+                              <input
+                                *ngIf="
+                                  this.resourceTypeDropdown ===
+                                  resourceTypeEnum.LINK
+                                "
+                                (change)="onChangeResourceInput($event)"
+                                type="text"
+                                class="form-control"
+                                id="resourceInput"
+                              />
+                              <input
+                                *ngIf="
+                                  this.resourceTypeDropdown ===
+                                  resourceTypeEnum.FILE
+                                "
+                                (change)="onChangeResourceInput($event)"
+                                accept=".pdf"
+                                type="file"
+                                class="form-control-file"
+                                id="resourceInput"
+                              />
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              (click)="onAddResource()"
+                              type="submit"
+                              class="btn btn-primary"
+                            >
+                              Add Resource
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Resource content -->
+                  <div>
+                    <!-- Resource content row -->
+                    <div *ngFor="let resource of course.resources">
+                      <a
+                        *ngIf="typeOfResource(resource)"
+                        href="{{ resource }}"
+                        target="_blank"
+                        >{{ resource }}</a
+                      >
+                      <a
+                        *ngIf="!typeOfResource(resource)"
+                        (click)="downloadAssignment(resource, 'pdf')"
+                        >{{ resource.name }}</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="card">
                 <div>
                   <h4 class="mb-3 mb-sm-2 pt-1">Syllabus</h4>
@@ -79,7 +222,11 @@
               </div>
             </div>
 
-            <div class="col-md-6 mb-4">
+            <!-- Right -->
+            <div
+              *ngIf="this.coursedropdown === courseDropdownEnum.RESOURCES"
+              class="col-md-6 mb-4"
+            >
               <div class="card mb-4">
                 <button
                   (click)="downloadAssignment(course.assignment, 'pdf')"
@@ -90,7 +237,7 @@
                 </button>
               </div>
 
-              <div class="card p-2" *ngIf="!this.user.faculty">
+              <div class="card p-4" *ngIf="this.user && !this.user.faculty">
                 <div>
                   <label for="profile_pic"
                     ><b>Upload your assignment here</b></label
@@ -113,20 +260,79 @@
                   >
                 </div>
               </div>
+            </div>
 
-              <div class="card p-2" *ngIf="this.user.faculty">
-                <h4>Submitted student assignments:</h4>
-                <div *ngFor="let assignment of course.assignmentAnswers">
-                  <label for="assignment.user">{{ assignment.user }}:</label>
-                  <a
-                    ><button
-                      (click)="downloadAssignment(assignment.assignment, 'zip')"
-                      class="btn btn-primary m-4"
-                      type="submit"
+            <div
+              class="col-md-12 mb4"
+              *ngIf="this.coursedropdown === courseDropdownEnum.ATTENDEES"
+            >
+              <div class="card p-4">
+                <h4>Attendees:</h4>
+                <div class="attendees-container-header mb-4">
+                  <label class="attendees-name">Email:</label>
+                  <div class="attendees-right-side">
+                    <label
+                      *ngIf="this.user && this.user.faculty"
+                      class="attendees-header-assignment"
+                      >Submitted Assignment:</label
                     >
-                      <i class="fa fa-download mr-3"></i>Download answer
-                    </button></a
-                  >
+                    <label class="mr-2">Grade:</label>
+                  </div>
+                </div>
+                <div
+                  class="mb-2 attendees-container"
+                  *ngFor="let attendee of course.attendees"
+                >
+                  <label class="attendees-name" for="attendee.user">{{
+                    attendee.user
+                  }}</label>
+                  <div class="attendees-right-side">
+                    <a
+                      *ngIf="
+                        this.user &&
+                        this.user.faculty &&
+                        attendee.submittedAssignment
+                      "
+                      class="mr-2"
+                      ><button
+                        (click)="
+                          downloadAssignment(
+                            attendee.submittedAssignment,
+                            'zip'
+                          )
+                        "
+                        class="btn btn-primary"
+                        type="submit"
+                      >
+                        <i class="fa fa-download mr-3"></i>Download answer
+                      </button></a
+                    >
+                    <div class="attendees-right-grade form-group">
+                      <span
+                        class="mr-2"
+                        *ngIf="this.user && !this.user.faculty"
+                        >{{ attendee.grade || "NAN" }}</span
+                      >
+                      <select
+                        *ngIf="this.user && this.user.faculty"
+                        class="form-control"
+                        id="exampleFormControlSelect1"
+                        (change)="onGradeAssignment($event, attendee._id)"
+                        [value]="attendee.grade"
+                      >
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

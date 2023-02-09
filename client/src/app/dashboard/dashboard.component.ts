@@ -41,7 +41,7 @@ export class DashboardComponent {
               this.courses.push(res);
             });
         }
-        this.newcourse.owner = user.email;
+        this.newcourse.owner = user._id;
       },
       (err) => {
         console.error(err);
@@ -76,5 +76,19 @@ export class DashboardComponent {
       this.list = res;
       this.find = true;
     });
+  }
+  joinCourse(courseCode: string) {
+    if (!this.user.faculty) {
+      this.http
+        .post(
+          "/api/joinCourse/",
+          JSON.stringify({
+            courseCode,
+            userId: this.user._id,
+          }),
+          this.httpOptions
+        )
+        .subscribe((res) => {});
+    }
   }
 }
