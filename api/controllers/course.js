@@ -2,6 +2,23 @@ var mongoose = require("mongoose");
 var Course = mongoose.model("Course");
 var User = mongoose.model("User");
 
+var nodemailer = require("nodemailer");
+
+var transporter = nodemailer.createTransport({
+  service: "hotmail",
+  auth: {
+    user: "yourmail@mail.com",
+    pass: "yourpassword",
+  },
+});
+
+const getMailOptions = (listToMailTo, subject, content) => ({
+  from: "yourmail@mail.com",
+  to: listToMailTo.join(", "),
+  subject: subject,
+  text: content,
+});
+
 module.exports.newCourse = (req, res) => {
   var course = new Course();
   course.name = req.body.name;
@@ -195,10 +212,38 @@ module.exports.addResource = (req, res) => {
     { new: true },
     function (err, doc) {
       if (err) {
-        console.log("Giving this assingment aa grade failed" + err);
+        console.log("Adding a resource to this course failed" + err);
         res.status(404).json(err);
       }
+      sendMailUpdate(
+        doc,
+        `A RESOURCE HAS BEEN ADDED to ${doc.code}`,
+        `A resource has been added to the course ${doc.code}. Make sure to check it out before submitting your assignment!`
+      );
       res.status(200).json(doc.resources);
     }
   );
+};
+
+const sendMailUpdate = (course, subject, content) => {
+  User.find()
+    .where("_id")
+    .in(course.attendees.map((attendee) => attendee.user))
+    .exec((err, users) => {
+      if (err) {
+        console.log(err);
+      }
+      const usersEmailList = users.map((user) => user.email);
+      console.log(usersEmailList);
+      transporter.sendMail(
+        getMailOptions(usersEmailList, subject, content),
+        function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        }
+      );
+    });
 };

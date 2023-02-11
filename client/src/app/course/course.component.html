@@ -86,7 +86,7 @@
             <!-- Left -->
             <div
               *ngIf="this.coursedropdown === courseDropdownEnum.RESOURCES"
-              class="col-md-6 mb-4"
+              class="col-md-12 mb-4"
             >
               <div class="card mb-4 p-2">
                 <div>
@@ -182,7 +182,10 @@
                   <!-- Resource content -->
                   <div>
                     <!-- Resource content row -->
-                    <div *ngFor="let resource of course.resources">
+                    <div
+                      class="resource-item"
+                      *ngFor="let resource of course.resources"
+                    >
                       <a
                         *ngIf="typeOfResource(resource)"
                         href="{{ resource }}"
@@ -198,7 +201,8 @@
                   </div>
                 </div>
               </div>
-              <div class="card">
+              <!-- Syllabus -->
+              <!-- <div class="card">
                 <div>
                   <h4 class="mb-3 mb-sm-2 pt-1">Syllabus</h4>
                   <div class="p-2">
@@ -219,7 +223,7 @@
                     />
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
 
             <!-- Right -->
