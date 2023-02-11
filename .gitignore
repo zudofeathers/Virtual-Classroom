@@ -1,5 +1,6 @@
 *.crt
 *.key
+.env
 
 # dependencies
 node_modules
