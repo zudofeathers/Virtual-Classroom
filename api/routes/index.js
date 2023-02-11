@@ -1,6 +1,8 @@
 var express = require("express");
 var router = express.Router();
 var { expressjwt: jwt } = require("express-jwt");
+const dotenv = require("dotenv");
+dotenv.config();
 var auth = jwt({
   secret: "MY_SECRET",
   userProperty: "payload",

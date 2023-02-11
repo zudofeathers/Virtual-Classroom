@@ -5,15 +5,15 @@ var User = mongoose.model("User");
 var nodemailer = require("nodemailer");
 
 var transporter = nodemailer.createTransport({
-  service: "hotmail",
+  service: process.env.EMAIL_SERVICE,
   auth: {
-    user: "yourmail@mail.com",
-    pass: "yourpassword",
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASS,
   },
 });
 
 const getMailOptions = (listToMailTo, subject, content) => ({
-  from: "yourmail@mail.com",
+  from: process.env.AUTH_EMAIL,
   to: listToMailTo.join(", "),
   subject: subject,
   text: content,
