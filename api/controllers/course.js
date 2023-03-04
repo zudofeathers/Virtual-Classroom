@@ -1,7 +1,6 @@
 var mongoose = require("mongoose");
 var Course = mongoose.model("Course");
 var User = mongoose.model("User");
-
 var nodemailer = require("nodemailer");
 
 var transporter = nodemailer.createTransport({

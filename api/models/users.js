@@ -14,6 +14,7 @@ var userSchema = new mongoose.Schema({
   },
   hash: String,
   salt: String,
+  resetPasswordToken: String,
   faculty: {
     type: Boolean,
     default: false,

@@ -39,5 +39,6 @@ router.post("/addResource", ctrlCourse.addResource);
 
 //Forgot Password
 router.post("/forgotPassword", ctrlAuth.forgotPassword);
+router.post("/resetPassword", ctrlAuth.resetPassword);
 
 module.exports = router;
