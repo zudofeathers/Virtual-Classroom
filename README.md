@@ -29,5 +29,4 @@ sudo sysctl -p --system
 
 ## Contributors
 
-- Praveen Kumar Gupta
-- Shashank P
+- Vinayaka Punjabi
