@@ -224,6 +224,28 @@ module.exports.addResource = (req, res) => {
   );
 };
 
+module.exports.startCourseSession = (req, res) => {
+  var { courseCode } = req.body;
+
+  var conditions = {
+    code: courseCode,
+  };
+
+  Course.findOne(conditions, function (err, doc) {
+    if (err) {
+      console.log("sending mail failed" + err);
+      res.status(404).json(err);
+    }
+    sendMailUpdate(
+      doc,
+      `THE SESSION OF COURSE ${doc.code} HAS STARTED`,
+      `A session has started, Please click the following link to go to crouse ${doc.code} to join the sesion: http://localhost:4200/course/${courseCode}`
+    );
+  });
+
+  res.status(200).json("emails send succesfully");
+};
+
 const sendMailUpdate = (course, subject, content) => {
   User.find()
     .where("_id")
