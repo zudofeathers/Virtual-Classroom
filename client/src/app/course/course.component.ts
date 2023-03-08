@@ -80,24 +80,23 @@ export class CourseComponent implements OnInit {
     URL.revokeObjectURL(downloadURL);
   }
   startSession() {
+    const domain = "meet.jit.si";
+    const options = {
+      roomName: "VirtualClassroom-" + this.course.code,
+      width: 700,
+      height: 600,
+      parentNode: document.querySelector("#meet"),
+    };
+    this.api = new JitsiMeetExternalAPI(domain, options);
+
+    this.sessionStatus = true;
     if (this.user.faculty) {
       const formData = new FormData();
 
       formData.append("courseCode", this.course.code);
       this.http
         .post("/api/startCourseSession", formData)
-        .subscribe((res: any) => {
-          const domain = "meet.jit.si";
-          const options = {
-            roomName: "VirtualClassroom-" + this.course.code,
-            width: 700,
-            height: 600,
-            parentNode: document.querySelector("#meet"),
-          };
-          this.api = new JitsiMeetExternalAPI(domain, options);
-
-          this.sessionStatus = true;
-        });
+        .subscribe((res: any) => {});
     }
   }
   stopSession() {
