@@ -232,8 +232,14 @@
               class="col-md-6 mb-4"
             >
               <div class="card mb-4">
+                <span class="mt-4"
+                  >Deadline: {{ course.assignment.deadline }}</span
+                >
+                <span class="mt-4 alert alert-danger"
+                  >Deadline: {{ course.assignment.deadline }}</span
+                >
                 <button
-                  (click)="downloadAssignment(course.assignment, 'pdf')"
+                  (click)="downloadAssignment(course.assignment.file, 'pdf')"
                   class="btn btn-primary m-4"
                   type="submit"
                 >

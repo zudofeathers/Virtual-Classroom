@@ -23,7 +23,8 @@ module.exports.newCourse = (req, res) => {
   course.name = req.body.name;
   course.code = req.body.code;
   course.owner = req.body.owner;
-  course.assignment = req["files"].assignment;
+  course.assignment.deadline = req.body.assignmentDeadline;
+  course.assignment.file = req["files"].assignment;
 
   course.save((err) => {
     if (err) {

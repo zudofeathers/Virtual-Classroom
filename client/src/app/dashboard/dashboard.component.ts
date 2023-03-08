@@ -16,6 +16,7 @@ export class DashboardComponent {
     name: "",
     owner: "",
     assignment: null,
+    assignmentDeadline: null,
   };
   find = false;
   list: Object = [];
@@ -64,7 +65,7 @@ export class DashboardComponent {
     formData.append("name", this.newcourse.name);
     formData.append("code", this.newcourse.code);
     formData.append("owner", this.newcourse.owner);
-
+    formData.append("assignmentDeadline", this.newcourse.assignmentDeadline);
     this.http
       .post("/api/newCourse", formData)
       .subscribe((res: { code: string }) => {
