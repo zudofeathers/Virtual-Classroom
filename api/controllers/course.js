@@ -158,9 +158,13 @@ module.exports.handInAssignment = (req, res) => {
     "attendees.user": userId,
   };
 
+  console.log();
   var update = {
     $set: {
       "attendees.$.submittedAssignment": req["files"].assignment,
+      "attendees.$.submittedAssignmentDate": new Date()
+        .toISOString()
+        .split("T")[0],
     },
   };
   Course.findOneAndUpdate(conditions, update, function (err, doc) {

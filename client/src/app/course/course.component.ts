@@ -3,7 +3,12 @@ import { ActivatedRoute } from "@angular/router";
 import { AuthenticationService, UserDetails } from "../authentication.service";
 import { Router } from "@angular/router";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Course, CourseDropdown, ResourceType } from "../models/course";
+import {
+  Attendee,
+  Course,
+  CourseDropdown,
+  ResourceType,
+} from "../models/course";
 
 //let jitsi = require('https://meet.jit.si/external_api.js');
 declare function JitsiMeetExternalAPI(a, b): void;
@@ -26,7 +31,8 @@ export class CourseComponent implements OnInit {
     assignment: null,
     resources: [],
   };
-  handedInAssignment = null;
+  submittedAssignment = null;
+  submittedAssignmentDate = null;
   sessionStatus: boolean = false;
   newSyllabus = "";
   httpOptions = {
@@ -48,9 +54,13 @@ export class CourseComponent implements OnInit {
             .subscribe((res: any) => {
               this.course = res;
               if (!user.faculty) {
-                this.handedInAssignment = res.attendees.find(
+                const currentAttendee: Attendee = res.attendees.find(
                   (attendee) => attendee.user === user.email
-                ).submittedAssignment;
+                );
+
+                this.submittedAssignment = currentAttendee.submittedAssignment;
+                this.submittedAssignmentDate =
+                  currentAttendee.submittedAssignmentDate;
               }
             });
         });
@@ -60,6 +70,35 @@ export class CourseComponent implements OnInit {
         console.error(err);
       }
     );
+  }
+  checkDeadlineOverdue(): boolean {
+    if (!this.course.assignment || !this.course.assignment.deadline) {
+      return false;
+    }
+    console.log(this.course.assignment);
+    const currentDate = new Date().getTime();
+    const compareDate = new Date(this.course.assignment.deadline).getTime();
+
+    let diff = currentDate - compareDate;
+    if (diff > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  checkSubmissionOverdue(submissionDate): boolean {
+    if (!submissionDate) {
+      return false;
+    }
+    const currentDate = new Date(this.course.assignment.deadline).getTime();
+    const compareDate = new Date(submissionDate).getTime();
+
+    let diff = compareDate - currentDate;
+    if (diff > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
   handleCourseDropdown(clicked: CourseDropdown) {
     this.coursedropdown = clicked;
@@ -128,10 +167,11 @@ export class CourseComponent implements OnInit {
       formData.append("courseCode", this.course.code);
       formData.append("userId", this.user._id);
       formData.append("assignment", file, file.name);
+
       this.http
         .post("/api/handInAssignment", formData)
         .subscribe((res: any) => {
-          this.handedInAssignment = res;
+          this.submittedAssignment = res;
         });
     }
   }
@@ -144,7 +184,7 @@ export class CourseComponent implements OnInit {
     this.http
       .post("/api/updateAssignmentGrade", formData)
       .subscribe((res: any) => {
-        this.handedInAssignment = res;
+        this.submittedAssignment = res;
       });
   }
   decryptAssignment(assignment, fileType: string): Blob {

@@ -2,7 +2,7 @@ export type Course = {
   name: string;
   code: string;
   owner: string;
-  assignment: { file: File; deadline: String };
+  assignment: { file: File; deadline: string };
   attendees?: Attendee[];
   syllabus?: string[];
   resources: (File | string)[];
@@ -10,8 +10,8 @@ export type Course = {
 
 export type Attendee = {
   user: string;
-  assignment?: File;
-  submittedAssignmentDate: String;
+  submittedAssignment?: File;
+  submittedAssignmentDate: string;
   grade?: string;
 };
 
