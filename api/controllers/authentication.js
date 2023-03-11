@@ -41,7 +41,14 @@ module.exports.register = function (req, res) {
   user.email = req.body.email;
   user.faculty = req.body.faculty;
   user.setPassword(req.body.password);
-
+  if (
+    !req.body.password.match(
+      /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
+    )
+  ) {
+    res.status(404).json("check if password complies to all rules");
+    return;
+  }
   user.save(function (err, result) {
     if (err) {
       console.log("err", err);
