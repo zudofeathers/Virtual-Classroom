@@ -160,40 +160,9 @@
         </div>
         <!-- Heading -->
 
-        <!--Card group-->
-        <div *ngIf="!find" class="card-deck">
-          <!-- <template [ngIf]="courses"> -->
-          <div *ngFor="let course of courses" class="wow fadeIn">
-            <a routerLink="{{ '/course/' + course.code }}">
-              <!--Card-->
-              <div class="card mb-4">
-                <!--Card content-->
-                <div class="card-body">
-                  <!--Title-->
-                  <h4 class="card-title">
-                    {{ course.code }} - {{ course.name }}
-                  </h4>
-                  <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                  <button
-                    type="button"
-                    class="btn btn-blue btn-md"
-                    (click)="joinCourse(course.code)"
-                  >
-                    Join Course
-                  </button>
-                </div>
-                <!--Card content-->
-              </div>
-              <!--Card-->
-            </a>
-          </div>
-          <!-- </template> -->
-        </div>
-        <!--Card group-->
-
         <div *ngIf="find" class="card-deck">
           <!-- <template [ngIf]="courses"> -->
-          <div *ngFor="let course of list" class="wow fadeIn">
+          <div *ngFor="let course of courses" class="wow fadeIn">
             <a routerLink="{{ '/course/' + course.code }}">
               <!--Card-->
               <div class="card mb-4">
