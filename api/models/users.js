@@ -19,7 +19,7 @@ var userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  mob: String,
+  phone: String,
   dob: Date,
   education: String,
   gender: {
