@@ -51,6 +51,14 @@
                   <strong>Register</strong>
                 </h3>
                 <hr />
+                <div *ngIf="wrongPassword" class="alert alert-danger">
+                  Your password is not strong Enough <br />
+                  * 6 Characters total Minimum<br />
+                  * 1 Minimum special character<br />
+                  * 1 Minimum captial letter<br />
+                  * 1 Minimum number<br />
+                  * 1 Minimum non capital letter
+                </div>
                 <div class="md-form">
                   <label for="name">Full Name</label>
                   <input

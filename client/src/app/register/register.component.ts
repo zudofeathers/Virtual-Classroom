@@ -12,7 +12,7 @@ export class RegisterComponent {
     password: "",
     faculty: false,
   };
-
+  wrongPassword = false;
   constructor(private auth: AuthenticationService, private router: Router) {}
 
   register() {
@@ -21,6 +21,9 @@ export class RegisterComponent {
         this.router.navigateByUrl("/profile");
       },
       (err) => {
+        if (err.error === "password") {
+          this.wrongPassword = true;
+        }
         console.error(err);
       }
     );
