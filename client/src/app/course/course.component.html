@@ -350,7 +350,11 @@
                         >{{ attendee.grade || "NAN" }}</span
                       >
                       <select
-                        *ngIf="this.user && this.user.faculty"
+                        *ngIf="
+                          this.user &&
+                          this.user.faculty &&
+                          attendee.submittedAssignment
+                        "
                         class="form-control"
                         id="exampleFormControlSelect1"
                         (change)="onGradeAssignment($event, attendee._id)"
