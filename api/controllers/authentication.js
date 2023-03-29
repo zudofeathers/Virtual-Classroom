@@ -112,7 +112,6 @@ module.exports.forgotPassword = async (req, res) => {
 
   // Find user by email
   const user = await User.findOne({ email });
-  console.log(user.setPassword);
 
   if (!user) {
     res.status(400).json({ message: "No user found with that email" });

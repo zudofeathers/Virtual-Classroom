@@ -110,6 +110,18 @@
                 </button>
               </div>
               <div class="modal-body">
+                <div
+                  *ngIf="emailSendSuccesfully && message"
+                  class="alert alert-success"
+                >
+                  {{ message }}
+                </div>
+                <div
+                  *ngIf="!emailSendSuccesfully && message"
+                  class="alert alert-danger"
+                >
+                  {{ message }}
+                </div>
                 <div class="md-form mb-5">
                   <i class="fa fa-user prefix grey-text"></i>
                   <input

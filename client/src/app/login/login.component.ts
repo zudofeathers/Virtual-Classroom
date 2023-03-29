@@ -16,7 +16,8 @@ export class LoginComponent {
     password: "",
   };
   emailForPassword;
-
+  message;
+  emailSendSuccesfully;
   constructor(
     private auth: AuthenticationService,
     private router: Router,
@@ -45,7 +46,20 @@ export class LoginComponent {
         JSON.stringify({ email: this.emailForPassword }),
         this.httpOptions
       )
-      .subscribe((res) => console.log(res));
+      .subscribe(
+        (res: any) => {
+          if (res.message) {
+            this.message = res.message;
+            this.emailSendSuccesfully = true;
+          }
+        },
+        (err) => {
+          if (err.error) {
+            this.message = err.error.message;
+            this.emailSendSuccesfully = false;
+          }
+        }
+      );
     // this.router.navigateByUrl('/newCourse');
   }
 }
