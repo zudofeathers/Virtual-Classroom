@@ -46,7 +46,7 @@ module.exports.register = function (req, res) {
       /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
     )
   ) {
-    res.status(404).json("check if password complies to all rules");
+    res.status(404).json("password");
     return;
   }
   user.save(function (err, result) {
