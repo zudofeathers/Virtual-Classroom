@@ -45,6 +45,9 @@
                 </h3>
                 <hr />
                 <div class="md-form">
+                  <div *ngIf="wrongPassword" class="alert alert-danger">
+                    {{ wrongPassword }}
+                  </div>
                   <label for="email">Email address</label>
                   <input
                     type="email"

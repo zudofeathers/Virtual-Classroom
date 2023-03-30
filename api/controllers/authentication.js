@@ -82,7 +82,12 @@ module.exports.login = function (req, res) {
       });
     } else {
       // If user is not found
-      res.status(401).json(info);
+      res
+        .status(401)
+        .json({
+          message:
+            "A user with this combination of email and password does not exist",
+        });
     }
   })(req, res);
 };

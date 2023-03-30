@@ -18,6 +18,7 @@ export class LoginComponent {
   emailForPassword;
   message;
   emailSendSuccesfully;
+  wrongPassword;
   constructor(
     private auth: AuthenticationService,
     private router: Router,
@@ -30,7 +31,8 @@ export class LoginComponent {
         this.router.navigateByUrl("/profile");
       },
       (err) => {
-        console.error(err);
+        console.error(err.error.message);
+        this.wrongPassword = err.error.message;
       }
     );
   }
