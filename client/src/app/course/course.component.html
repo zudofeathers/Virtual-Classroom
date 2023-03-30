@@ -346,6 +346,8 @@
                   }}</label>
                   <label
                     *ngIf="
+                      this.user &&
+                      this.user.faculty &&
                       !checkSubmissionOverdue(attendee.submittedAssignmentDate)
                     "
                     class="attendees-name"
@@ -354,6 +356,8 @@
                   >
                   <label
                     *ngIf="
+                      this.user &&
+                      this.user.faculty &&
                       checkSubmissionOverdue(attendee.submittedAssignmentDate)
                     "
                     class="attendees-name alert alert-danger"

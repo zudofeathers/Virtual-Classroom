@@ -20,7 +20,7 @@ var userSchema = new mongoose.Schema({
     default: false,
   },
   phone: String,
-  dob: Date,
+  dob: String,
   education: String,
   gender: {
     type: String,
