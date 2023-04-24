@@ -43,11 +43,11 @@
                 <h3 class="dark-grey-text text-center">
                   <strong>Sign in</strong>
                 </h3>
+                <div *ngIf="wrongPassword" class="alert alert-danger">
+                  {{ wrongPassword }}
+                </div>
                 <hr />
                 <div class="md-form">
-                  <div *ngIf="wrongPassword" class="alert alert-danger">
-                    {{ wrongPassword }}
-                  </div>
                   <label for="email">Email address</label>
                   <input
                     type="email"

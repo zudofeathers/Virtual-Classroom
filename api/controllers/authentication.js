@@ -19,16 +19,16 @@ var sendJSONresponse = function (res, status, content) {
 };
 
 var transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE,
+  service: "hotmail",
   auth: {
-    user: process.env.AUTH_EMAIL,
-    pass: process.env.AUTH_PASS,
+    user: "vinayakapunjabi@outlook.com",
+    pass: "Vinayakap12$#",
   },
 });
 
 const getMailOptions = (email, token) => {
   return {
-    from: process.env.AUTH_EMAIL,
+    from: "vinayakapunjabi@outlook.com",
     to: email,
     subject: "Reset your password",
     text: `Please click the following link to reset your password: http://localhost:4200/forgotpassword/${token}`,
@@ -41,12 +41,23 @@ module.exports.register = function (req, res) {
   user.email = req.body.email;
   user.faculty = req.body.faculty;
   user.setPassword(req.body.password);
+  let errors = [];
+  if (
+    !req.body.email.match(
+      /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
+    )
+  ) {
+    errors.push("email");
+  }
   if (
     !req.body.password.match(
       /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
     )
   ) {
-    res.status(404).json("password");
+    errors.push("password");
+  }
+  if (errors.length > 0) {
+    res.status(404).json(errors);
     return;
   }
   user.save(function (err, result) {
@@ -82,12 +93,10 @@ module.exports.login = function (req, res) {
       });
     } else {
       // If user is not found
-      res
-        .status(401)
-        .json({
-          message:
-            "A user with this combination of email and password does not exist",
-        });
+      res.status(401).json({
+        message:
+          "A user with this combination of email and password does not exist",
+      });
     }
   })(req, res);
 };
@@ -101,6 +110,12 @@ module.exports.resetPassword = async (req, res) => {
 
   if (!user) {
     res.status(400).json({ message: "Invalid or expired token" });
+    return;
+  }
+  if (
+    !password.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/)
+  ) {
+    res.status(404).json("password");
     return;
   }
   user.setPassword(password);

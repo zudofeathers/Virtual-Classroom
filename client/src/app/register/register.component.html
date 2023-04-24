@@ -51,6 +51,9 @@
                   <strong>Register</strong>
                 </h3>
                 <hr />
+                <div *ngIf="invalidEmail" class="alert alert-danger">
+                  Please use a correct email address
+                </div>
                 <div *ngIf="wrongPassword" class="alert alert-danger">
                   Your password is not strong Enough <br />
                   * 6 Characters total Minimum<br />

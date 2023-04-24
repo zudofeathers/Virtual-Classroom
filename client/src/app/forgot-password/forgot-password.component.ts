@@ -12,6 +12,9 @@ export class ForgotPasswordComponent {
   confirmPassword: string;
   invalidToken: boolean;
 
+  wrongPassword: boolean = false;
+  passwordNotMatch: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -26,25 +29,32 @@ export class ForgotPasswordComponent {
       }
 
       if (this.password !== this.confirmPassword) {
-        alert("Passwords do not match. Please try again.");
+        this.passwordNotMatch = true;
+        this.wrongPassword = false;
         return;
       }
-      console.log("token", token);
-      console.log("this.password", this.password);
       this.http
         .post("api/resetPassword", { token, password: this.password })
-        .subscribe((res) => {
-          if (!res) {
-            alert(
-              "There was an error resetting your password. Please try again."
-            );
-          } else {
-            alert(
-              "Your password has been reset successfully. Please login with your new password."
-            );
-            this.router.navigate(["/login"]);
+        .subscribe(
+          (res) => {
+            if (!res) {
+              alert(
+                "There was an error resetting your password. Please try again."
+              );
+            } else {
+              alert(
+                "Your password has been reset successfully. Please login with your new password."
+              );
+              this.router.navigate(["/login"]);
+            }
+          },
+          (err) => {
+            if (err.error === "password") {
+              this.wrongPassword = true;
+              this.passwordNotMatch = false;
+            }
           }
-        });
+        );
     });
   };
 }
