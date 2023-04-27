@@ -6,7 +6,7 @@
     background-size: cover;
   "
 >
-  <div class="my-view container">
+  <div class="my-view container scroll-box">
     <!--Main Navigation-->
     <header>
       <!-- Sidebar -->
@@ -50,147 +50,126 @@
         <!-- Heading -->
 
         <!--Grid row-->
-        <div class="row wow fadeIn">
-          <!--Grid column-->
-          <div class="col">
-            <div class="card">
-              <div class="m-4 p-2 border border-primary rounded bg-light">
-                <div class="col-md-9 col-md-offset-3 toppad">
-                  <div class="panel panel-info">
-                    <div class="panel-heading">
-                      <h1 class="panel-title">
-                        {{ details?.name | titlecase }}
-                      </h1>
-                    </div>
-                    <div class="panel-body">
-                      <div class="row">
-                        <div
-                          class="text-center col-md-5 col-lg-5 w-25 ml-5 h-25"
-                        >
-                          <img
-                            alt="User Pic"
-                            src="../../assets/images/default_profile.png"
-                            class="img-circle img-responsive"
-                          />
-                        </div>
-
-                        <div
-                          *ngIf="!editNow"
-                          class="col-md-9 col-lg-9 ml-5 mt-5"
-                        >
-                          <table class="table table-user-information">
-                            <tbody>
-                              <tr>
-                                <td>Date of Birth:</td>
-                                <td>{{ details?.dob }}</td>
-                              </tr>
-                              <tr>
-                                <td>Gender:</td>
-                                <td>{{ details?.gender | titlecase }}</td>
-                              </tr>
-                              <tr>
-                                <td>Education:</td>
-                                <td>{{ details?.education | titlecase }}</td>
-                              </tr>
-
-                              <tr>
-                                <td>Phone number:</td>
-                                <td>{{ details?.mob }}</td>
-                              </tr>
-                              <tr>
-                                <td>Email:</td>
-                                <td>{{ details?.email }}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-
-                        <div
-                          *ngIf="editNow"
-                          class="col-md-9 col-lg-9 ml-5 mt-5"
-                        >
-                          <table class="table table-user-information">
-                            <tbody>
-                              <tr>
-                                <td>Date of Birth:</td>
-                                <td>
-                                  <input
-                                    class="form-control"
-                                    type="text"
-                                    placeholder="Date of Birth"
-                                    [(ngModel)]="details.dob"
-                                  />
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Gender:</td>
-                                <td>
-                                  <input
-                                    class="form-control"
-                                    type="text"
-                                    placeholder="Gender"
-                                    [(ngModel)]="details.gender"
-                                  />
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Education:</td>
-                                <td>
-                                  <input
-                                    class="form-control"
-                                    type="text"
-                                    placeholder="Education"
-                                    [(ngModel)]="details.education"
-                                  />
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td>Phone number:</td>
-                                <td>
-                                  <input
-                                    class="form-control"
-                                    type="text"
-                                    placeholder="Phone number"
-                                    [(ngModel)]="details.phone"
-                                  />
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Email:</td>
-                                <td>
-                                  <input
-                                    class="form-control"
-                                    type="text"
-                                    placeholder="E-mail address"
-                                    [(ngModel)]="details.email"
-                                  />
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                      <div class="m-4">
-                        <button
-                          type="button"
-                          class="btn btn-primary"
-                          (click)="editNow = !editNow"
-                        >
-                          {{ editNow ? "Back" : "Edit" }}
-                        </button>
-                        <button
-                          type="button"
-                          *ngIf="editNow"
-                          class="btn btn-primary"
-                          (click)="editProfile()"
-                        >
-                          Update
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+        <!--Grid column-->
+        <div class="card">
+          <div
+            class="panel panel-info m-4 p-2 border border-primary rounded bg-light"
+          >
+            <div class="panel-heading">
+              <h1 class="panel-title">
+                {{ details?.name | titlecase }}
+              </h1>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="text-center col-md-5 col-lg-5 w-25 ml-5 h-25">
+                  <img
+                    alt="User Pic"
+                    src="../../assets/images/default_profile.png"
+                    class="img-circle img-responsive"
+                  />
                 </div>
+
+                <div *ngIf="!editNow" class="col-md-9 col-lg-9 ml-5 mt-5">
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td>Date of Birth:</td>
+                        <td>{{ details?.dob }}</td>
+                      </tr>
+                      <tr>
+                        <td>Gender:</td>
+                        <td>{{ details?.gender | titlecase }}</td>
+                      </tr>
+                      <tr>
+                        <td>Education:</td>
+                        <td>{{ details?.education | titlecase }}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Phone number:</td>
+                        <td>{{ details?.phone }}</td>
+                      </tr>
+                      <tr>
+                        <td>Email:</td>
+                        <td>{{ details?.email }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div *ngIf="editNow" class="col-md-9 col-lg-9 ml-5 mt-5">
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td>Date of Birth:</td>
+                        <td>
+                          <input
+                            class="form-control"
+                            type="text"
+                            placeholder="Date of Birth"
+                            [(ngModel)]="details.dob"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Gender:</td>
+                        <td>
+                          <input
+                            class="form-control"
+                            type="text"
+                            placeholder="Gender"
+                            [(ngModel)]="details.gender"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Education:</td>
+                        <td>
+                          <input
+                            class="form-control"
+                            type="text"
+                            placeholder="Education"
+                            [(ngModel)]="details.education"
+                          />
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>Phone number:</td>
+                        <td>
+                          <input
+                            class="form-control"
+                            type="text"
+                            placeholder="Phone number"
+                            [(ngModel)]="details.phone"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Email:</td>
+                        <td>{{ details?.email }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="m-4">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="editNow = !editNow"
+                >
+                  {{ editNow ? "Back" : "Edit" }}
+                </button>
+                <button
+                  type="button"
+                  *ngIf="editNow"
+                  class="btn btn-primary"
+                  (click)="editProfile()"
+                >
+                  Update
+                </button>
               </div>
             </div>
           </div>

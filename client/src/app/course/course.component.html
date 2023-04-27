@@ -8,7 +8,7 @@
     background-size: cover;
   "
 >
-  <div>
+  <div class="scroll-box">
     <div class="my-view container">
       <main class="my-main mx-lg-5 text-center">
         <div class="container-fluid mt-5">
@@ -180,7 +180,7 @@
                     </div>
                   </div>
                   <!-- Resource content -->
-                  <div>
+                  <div style="max-height: 248px" class="scroll-box col-md-12">
                     <!-- Resource content row -->
                     <div
                       class="resource-item"
@@ -227,13 +227,58 @@
             </div>
 
             <!-- Right -->
+            <!-- Admin download center aligned -->
             <div
-              *ngIf="this.coursedropdown === courseDropdownEnum.RESOURCES"
-              class="col-md-6 mb-4"
+              *ngIf="
+                this.user &&
+                this.user.faculty &&
+                this.coursedropdown === courseDropdownEnum.RESOURCES
+              "
+              class="col-md-12 mb-4 d-flex flex-row justify-content-center"
             >
-              <div class="card mb-4">
+              <div class="card mb-4 mr-2 col-md-6">
+                <span *ngIf="!checkDeadlineOverdue()" class="mt-4"
+                  >Deadline:
+                  {{ course.assignment && course.assignment.deadline }}</span
+                >
+                <span
+                  *ngIf="checkDeadlineOverdue()"
+                  class="mt-4 alert alert-danger"
+                  >Deadline:
+                  {{ course.assignment && course.assignment.deadline }}</span
+                >
                 <button
-                  (click)="downloadAssignment(course.assignment, 'pdf')"
+                  (click)="downloadAssignment(course.assignment.file, 'pdf')"
+                  class="btn btn-primary m-4"
+                  type="submit"
+                >
+                  <i class="fa fa-download mr-3"></i>Download assignment!
+                </button>
+              </div>
+            </div>
+
+            <!-- User download left aligned -->
+            <div
+              *ngIf="
+                this.user &&
+                !this.user.faculty &&
+                this.coursedropdown === courseDropdownEnum.RESOURCES
+              "
+              class="col-md-12 mb-4 d-flex flex-row"
+            >
+              <div class="card mb-4 mr-2 col-md-6">
+                <span *ngIf="!checkDeadlineOverdue()" class="mt-4"
+                  >Deadline:
+                  {{ course.assignment && course.assignment.deadline }}</span
+                >
+                <span
+                  *ngIf="checkDeadlineOverdue()"
+                  class="mt-4 alert alert-danger"
+                  >Deadline:
+                  {{ course.assignment && course.assignment.deadline }}</span
+                >
+                <button
+                  (click)="downloadAssignment(course.assignment.file, 'pdf')"
                   class="btn btn-primary m-4"
                   type="submit"
                 >
@@ -241,7 +286,10 @@
                 </button>
               </div>
 
-              <div class="card p-4" *ngIf="this.user && !this.user.faculty">
+              <div
+                class="card mb-4 p-4 col-md-6"
+                *ngIf="this.user && !this.user.faculty"
+              >
                 <div>
                   <label for="profile_pic"
                     ><b>Upload your assignment here</b></label
@@ -253,10 +301,10 @@
                     accept=".zip"
                   />
                 </div>
-                <div class="pt-1" *ngIf="handedInAssignment">
+                <div class="pt-1" *ngIf="submittedAssignment">
                   <span class="btn-success"
                     >You have already submitted your assignment called:
-                    {{ handedInAssignment.name }}</span
+                    {{ submittedAssignment.name }}</span
                   ><br />
                   <span class="btn-danger"
                     >Uploading a new zip file will override your old
@@ -274,12 +322,18 @@
                 <h4>Attendees:</h4>
                 <div class="attendees-container-header mb-4">
                   <label class="attendees-name">Email:</label>
+                  <label
+                    *ngIf="this.user && this.user.faculty"
+                    class="attendees-header-assignment mr-3"
+                    >Submission Date:</label
+                  >
                   <div class="attendees-right-side">
                     <label
                       *ngIf="this.user && this.user.faculty"
                       class="attendees-header-assignment"
                       >Submitted Assignment:</label
                     >
+
                     <label class="mr-2">Grade:</label>
                   </div>
                 </div>
@@ -290,6 +344,26 @@
                   <label class="attendees-name" for="attendee.user">{{
                     attendee.user
                   }}</label>
+                  <label
+                    *ngIf="
+                      this.user &&
+                      this.user.faculty &&
+                      !checkSubmissionOverdue(attendee.submittedAssignmentDate)
+                    "
+                    class="attendees-name"
+                    for="attendee.submittedAssignmentDate"
+                    >{{ attendee.submittedAssignmentDate }}</label
+                  >
+                  <label
+                    *ngIf="
+                      this.user &&
+                      this.user.faculty &&
+                      checkSubmissionOverdue(attendee.submittedAssignmentDate)
+                    "
+                    class="attendees-name alert alert-danger"
+                    for="attendee.submittedAssignmentDate"
+                    >{{ attendee.submittedAssignmentDate }}</label
+                  >
                   <div class="attendees-right-side">
                     <a
                       *ngIf="
@@ -318,7 +392,11 @@
                         >{{ attendee.grade || "NAN" }}</span
                       >
                       <select
-                        *ngIf="this.user && this.user.faculty"
+                        *ngIf="
+                          this.user &&
+                          this.user.faculty &&
+                          attendee.submittedAssignment
+                        "
                         class="form-control"
                         id="exampleFormControlSelect1"
                         (change)="onGradeAssignment($event, attendee._id)"

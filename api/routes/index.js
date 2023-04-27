@@ -36,8 +36,10 @@ router.post("/joinCourse", ctrlCourse.joinCourse);
 router.post("/handInAssignment", ctrlCourse.handInAssignment);
 router.post("/updateAssignmentGrade", ctrlCourse.updateAssignmentGrade);
 router.post("/addResource", ctrlCourse.addResource);
+router.post("/startCourseSession", ctrlCourse.startCourseSession);
 
 //Forgot Password
 router.post("/forgotPassword", ctrlAuth.forgotPassword);
+router.post("/resetPassword", ctrlAuth.resetPassword);
 
 module.exports = router;

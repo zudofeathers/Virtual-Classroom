@@ -12,7 +12,7 @@ export interface UserDetails {
   courses: [string];
   exp: number;
   iat: number;
-  dob: Date;
+  dob: string;
   gender: string;
   phone: string;
   education: string;

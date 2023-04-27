@@ -7,7 +7,7 @@
     background-size: cover;
   "
 >
-  <div class="my-view container">
+  <div class="my-view container scroll-box">
     <!--Main Navigation-->
     <header>
       <!-- Sidebar -->
@@ -114,6 +114,18 @@
                       >Assignment</label
                     >
                   </div>
+                  <div class="md-form mb-5">
+                    <i class="fa fa-calendar prefix grey-text"></i>
+                    <input
+                      type="date"
+                      id="assignmentDeadline"
+                      class="form-control"
+                      [(ngModel)]="newcourse.assignmentDeadline"
+                    />
+                    <label class="active" for="assignmentDeadline"
+                      >Assignment Deadline</label
+                    >
+                  </div>
                 </div>
                 <div class="modal-footer">
                   <button
@@ -136,7 +148,7 @@
 
     <!--Main layout-->
     <main class="mx-lg-5">
-      <div class="container-fluid mt-5">
+      <div class="container-fluid">
         <!-- Heading -->
         <div class="card mb-4 wow fadeIn">
           <!--Card content-->
@@ -148,40 +160,9 @@
         </div>
         <!-- Heading -->
 
-        <!--Card group-->
-        <div *ngIf="!find" class="card-deck">
-          <!-- <template [ngIf]="courses"> -->
-          <div *ngFor="let course of courses" class="wow fadeIn">
-            <a routerLink="{{ '/course/' + course.code }}">
-              <!--Card-->
-              <div class="card mb-4">
-                <!--Card content-->
-                <div class="card-body">
-                  <!--Title-->
-                  <h4 class="card-title">
-                    {{ course.code }} - {{ course.name }}
-                  </h4>
-                  <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                  <button
-                    type="button"
-                    class="btn btn-blue btn-md"
-                    (click)="joinCourse(course.code)"
-                  >
-                    Join Course
-                  </button>
-                </div>
-                <!--Card content-->
-              </div>
-              <!--Card-->
-            </a>
-          </div>
-          <!-- </template> -->
-        </div>
-        <!--Card group-->
-
         <div *ngIf="find" class="card-deck">
           <!-- <template [ngIf]="courses"> -->
-          <div *ngFor="let course of list" class="wow fadeIn">
+          <div *ngFor="let course of courses" class="wow fadeIn">
             <a routerLink="{{ '/course/' + course.code }}">
               <!--Card-->
               <div class="card mb-4">

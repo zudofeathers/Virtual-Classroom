@@ -14,12 +14,13 @@ var userSchema = new mongoose.Schema({
   },
   hash: String,
   salt: String,
+  resetPasswordToken: String,
   faculty: {
     type: Boolean,
     default: false,
   },
-  mob: String,
-  dob: Date,
+  phone: String,
+  dob: String,
   education: String,
   gender: {
     type: String,

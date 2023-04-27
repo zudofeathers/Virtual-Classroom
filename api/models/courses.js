@@ -24,6 +24,9 @@ var courseSchema = new mongoose.Schema({
         submittedAssignment: {
           type: mongoose.Schema.Types.Mixed,
         },
+        submittedAssignmentDate: {
+          type: String,
+        },
         grade: {
           type: String,
         },
@@ -40,7 +43,8 @@ var courseSchema = new mongoose.Schema({
     default: [],
   },
   assignment: {
-    type: mongoose.Schema.Types.Mixed,
+    file: { type: mongoose.Schema.Types.Mixed },
+    deadline: { type: String },
   },
 });
 

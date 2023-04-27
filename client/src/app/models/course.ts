@@ -2,15 +2,16 @@ export type Course = {
   name: string;
   code: string;
   owner: string;
-  assignment: File;
-  attendees?: AssignmentAnswer[];
+  assignment: { file: File; deadline: string };
+  attendees?: Attendee[];
   syllabus?: string[];
   resources: (File | string)[];
 };
 
-export type AssignmentAnswer = {
+export type Attendee = {
   user: string;
-  assignment?: File;
+  submittedAssignment?: File;
+  submittedAssignmentDate: string;
   grade?: string;
 };
 

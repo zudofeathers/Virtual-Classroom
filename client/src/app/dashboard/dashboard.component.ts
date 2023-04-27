@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { AuthenticationService, UserDetails } from "../authentication.service";
 import { Router } from "@angular/router";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Course } from "../models/course";
 
 @Component({
   /*selector: 'app-dashboard',*/
@@ -10,15 +11,15 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 })
 export class DashboardComponent {
   user: UserDetails;
-  courses: Object[] = [];
+  courses: Course[] = [];
   newcourse = {
     code: "",
     name: "",
     owner: "",
     assignment: null,
+    assignmentDeadline: null,
   };
   find = false;
-  list: Object = [];
 
   constructor(
     private auth: AuthenticationService,
@@ -32,15 +33,7 @@ export class DashboardComponent {
     this.auth.profile().subscribe(
       (user) => {
         this.user = user;
-        //Log the user details
-        //Load MyCourses
-        for (var course in user.courses) {
-          this.http
-            .get("/api/courseDetails/" + user.courses[course], this.httpOptions)
-            .subscribe((res) => {
-              this.courses.push(res);
-            });
-        }
+        this.allCourses();
         this.newcourse.owner = user._id;
       },
       (err) => {
@@ -64,7 +57,7 @@ export class DashboardComponent {
     formData.append("name", this.newcourse.name);
     formData.append("code", this.newcourse.code);
     formData.append("owner", this.newcourse.owner);
-
+    formData.append("assignmentDeadline", this.newcourse.assignmentDeadline);
     this.http
       .post("/api/newCourse", formData)
       .subscribe((res: { code: string }) => {
@@ -72,10 +65,12 @@ export class DashboardComponent {
       });
   }
   allCourses() {
-    this.http.get("/api/allCourses/", this.httpOptions).subscribe((res) => {
-      this.list = res;
-      this.find = true;
-    });
+    this.http
+      .get("/api/allCourses/", this.httpOptions)
+      .subscribe((res: Course[]) => {
+        this.courses = res;
+        this.find = true;
+      });
   }
   joinCourse(courseCode: string) {
     if (!this.user.faculty) {

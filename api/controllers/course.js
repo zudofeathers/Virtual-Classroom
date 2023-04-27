@@ -1,19 +1,18 @@
 var mongoose = require("mongoose");
 var Course = mongoose.model("Course");
 var User = mongoose.model("User");
-
 var nodemailer = require("nodemailer");
 
 var transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE,
+  service: "hotmail",
   auth: {
-    user: process.env.AUTH_EMAIL,
-    pass: process.env.AUTH_PASS,
+    user: "vinayakapunjabi@outlook.com",
+    pass: "Vinayakap12$#",
   },
 });
 
 const getMailOptions = (listToMailTo, subject, content) => ({
-  from: process.env.AUTH_EMAIL,
+  from: "vinayakapunjabi@outlook.com",
   to: listToMailTo.join(", "),
   subject: subject,
   text: content,
@@ -24,7 +23,8 @@ module.exports.newCourse = (req, res) => {
   course.name = req.body.name;
   course.code = req.body.code;
   course.owner = req.body.owner;
-  course.assignment = req["files"].assignment;
+  course.assignment.deadline = req.body.assignmentDeadline;
+  course.assignment.file = req["files"].assignment;
 
   course.save((err) => {
     if (err) {
@@ -158,9 +158,13 @@ module.exports.handInAssignment = (req, res) => {
     "attendees.user": userId,
   };
 
+  console.log();
   var update = {
     $set: {
       "attendees.$.submittedAssignment": req["files"].assignment,
+      "attendees.$.submittedAssignmentDate": new Date()
+        .toISOString()
+        .split("T")[0],
     },
   };
   Course.findOneAndUpdate(conditions, update, function (err, doc) {
@@ -223,6 +227,28 @@ module.exports.addResource = (req, res) => {
       res.status(200).json(doc.resources);
     }
   );
+};
+
+module.exports.startCourseSession = (req, res) => {
+  var { courseCode } = req.body;
+
+  var conditions = {
+    code: courseCode,
+  };
+
+  Course.findOne(conditions, function (err, doc) {
+    if (err) {
+      console.log("sending mail failed" + err);
+      res.status(404).json(err);
+    }
+    sendMailUpdate(
+      doc,
+      `THE SESSION OF COURSE ${doc.code} HAS STARTED`,
+      `A session has started, Please click the following link to go to crouse ${doc.code} to join the sesion: http://localhost:4200/course/${courseCode}`
+    );
+  });
+
+  res.status(200).json("emails send succesfully");
 };
 
 const sendMailUpdate = (course, subject, content) => {
